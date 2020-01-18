@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp", "CarPoolingApp\CarPoolingApp.csproj", "{300AB9B5-0862-42BC-949E-E55CE0047D76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp", "CarPoolingApp\CarPoolingApp.csproj", "{300AB9B5-0862-42BC-949E-E55CE0047D76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Models", "CarPoolingApp.Models\CarPoolingApp.Models.csproj", "{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp.Models", "CarPoolingApp.Models\CarPoolingApp.Models.csproj", "{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Services", "CarPoolingApp.Services\CarPoolingApp.Services.csproj", "{478190C1-6D7F-4808-A5BB-D34FFD868E66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Helpers", "CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj", "{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{478190C1-6D7F-4808-A5BB-D34FFD868E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{478190C1-6D7F-4808-A5BB-D34FFD868E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{478190C1-6D7F-4808-A5BB-D34FFD868E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{478190C1-6D7F-4808-A5BB-D34FFD868E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

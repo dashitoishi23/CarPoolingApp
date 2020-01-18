@@ -18,8 +18,5 @@ namespace CarPoolingApp.Models
             this.Password = password;
             this.UserID = "USR" + DateTime.Now.ToString();
         }
-        {
-
-        }
     }
 }

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CarPoolingApp.Models
 {
-    class Offer
+    public class Offer
     {
-        public int CostPerKm { get; set; };
-        public int MaximumPeople { get; set; };
-        public string StartPoint { get; set; };
+        public int CostPerKm { get; set; }
+        public int MaximumPeople { get; set; }
+        public string StartPoint { get; set; }
         public List<string> ViaPoints = new List<string>();
         public string EndPoint { get; set; }
         public string ID { get; set; }
@@ -22,6 +22,7 @@ namespace CarPoolingApp.Models
             this.ViaPoints = viaPoints;
             this.EndPoint = endPoint;
             this.CarModel = carModel;
+            this.ID = "OFR" + DateTime.Now.ToString();
         }
 
     }

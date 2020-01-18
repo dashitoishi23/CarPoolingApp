@@ -5,7 +5,8 @@ namespace CarPoolingApp.Models
 {
     public class OverallSupervisor
     {
-        public List<string> Accounts = new List<string>();
-        public List<string> Offers = new List<string>();
+        public List<User> Accounts = new List<User>();
+        public List<Offer> Offers = new List<Offer>();
+        public List<Booking> Bookings = new List<Booking>();
     }
 }
