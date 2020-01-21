@@ -8,25 +8,20 @@ namespace CarPoolingApp.Helpers
 {
     public class SignupHelper
     {
-        public User SignupService(OverallSupervisor supervisor)
+        public void SignupService(ref OverallSupervisor supervisor, string userName, string password, string answer)
         {
             User NewUser;
             while (true)
             {
-                Console.WriteLine("Enter a username");
-                string UserName = Console.ReadLine();
-                var UserDuplicate = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, UserName)));
-                Console.WriteLine("Enter a password");
-                string Password = Console.ReadLine();
-                NewUser = new User(UserName, Password);
+                var UserDuplicate = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
                 if (UserDuplicate != null)
                 {
-                    Console.WriteLine("Username exists");
-                    continue;
+                    throw new Exception("User exists");
                 }
+                NewUser = new User(userName, password, answer);
                 break;
             }
-                return NewUser;
+            supervisor.Accounts.Add(NewUser);
             
         }
     }

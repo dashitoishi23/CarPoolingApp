@@ -14,7 +14,7 @@ namespace CarPoolingApp.Models
     public class Booking
     {
         public string BookingID { get; set; }
-        public bool ApprovalStatus { get; set; }
+        public string ApprovalStatus { get; set; }
         public DateTime DateCreated { get; }
         public string OfferID { get; set; }
         public string StartPoint { get; set; }
@@ -30,7 +30,7 @@ namespace CarPoolingApp.Models
             this.Distance = 20;
             this.Price = this.Distance * costPerKm;
             this.DateCreated = DateTime.Now;
-            this.ApprovalStatus = false;
+            this.ApprovalStatus = "NA";
             this.BookingID = "BKN" + DateTime.Now.ToString();
         }
 

@@ -1,35 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolingApp.Models;
 using System.Text;
+using System.Linq;
+using CarPoolingApp.Models;
 
 namespace CarPoolingApp.Services
 {
     public class BookingServiceProvider
     {
-        public List<Booking> ViewBookings(User User, OverallSupervisor supervisor)
+        public bool IsBookingPending(OverallSupervisor supervisor, string userName)
         {
-            List<Booking> AllBookings = new List<Booking>();
-            foreach (string ID in User.BookingIDs)
+            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
+            foreach (Booking booking in supervisor.Bookings)
             {
-                AllBookings.Add(supervisor.Bookings.Find(_ => (string.Equals(ID, _.BookingID))));
+                if (booking.ApprovalStatus.Equals("NA"))
+                {
+                    foreach (string offerID in UserFound.Offers)
+                    {
+                        if (offerID.Equals(booking.OfferID))
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
-            return AllBookings;
+            return false;
         }
-        public void ConfirmBooking(string bookingID, ref OverallSupervisor supervisor)
+        public void MakeBooking(string offerID, string userName, ref OverallSupervisor supervisor)
         {
-            var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, bookingID)));
-            supervisor.Bookings.Remove(Booking);
-            Booking.ApprovalStatus = true;
-            supervisor.Bookings.Add(Booking);
-        }
-        public void MakeBooking(string offerID, string startPoint, string endPoint, ref OverallSupervisor supervisor, ref User user)
-        {
-            var Book = supervisor.Offers.Find(_ => (_.ID == offerID));
-            Booking NewBooking = new Booking(offerID, startPoint, endPoint, Book.CostPerKm);
+            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
+            var Offer = supervisor.Offers.FirstOrDefault(_ => (string.Equals(_.ID, offerID)));
+            if(Offer == null || Offer.MaximumPeople == 0)
+            {
+                throw new Exception("Offer ID invalid");
+            }
+            if (UserFound.Debt != 0)
+            {
+                throw new Exception("You have debts, please clear it");
+            }
+            Booking NewBooking = new Booking(offerID, Offer.StartPoint, Offer.EndPoint, Offer.CostPerKm);
+            Offer.MaximumPeople--;
+            supervisor.Accounts.Remove(UserFound);
+            UserFound.BookingIDs.Add(NewBooking.BookingID);
             supervisor.Bookings.Add(NewBooking);
-            user.BookingIDs.Add("BKN" + DateTime.Now.ToString());
+            supervisor.Accounts.Add(UserFound);
         }
-        
+        public List<Booking> ViewBookings(string userName, ref OverallSupervisor supervisor)
+        {
+            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
+            List<Booking> Bookings = new List<Booking>();
+            foreach (string bookingID in UserFound.BookingIDs)
+            {
+                Bookings.Add(supervisor.Bookings.FirstOrDefault(_ => (string.Equals(_.BookingID, bookingID))));
+            }
+            return Bookings;
+        }
+        public void ConfirmBooking(int response, string bookingID, OverallSupervisor supervisor)
+        {
+            var BookingFound = supervisor.Bookings.FirstOrDefault(_ => (string.Equals(_.BookingID, bookingID)));
+            if(BookingFound == null)
+            {
+                throw new Exception("Invalid Booking ID");
+            }
+            BookingFound.ApprovalStatus = response == 1 ? BookingConfirmationTypes.Accept.ToString() : BookingConfirmationTypes.Reject.ToString();
+        }
+        public static List<Booking> UsersBookingsGenerator(string userName, OverallSupervisor supervisor)
+        {
+            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
+            List<Booking> BookingsToReturn = new List<Booking>();
+            foreach(string offerID in UserFound.Offers)
+            {
+                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.OfferID, offerID)));
+                if (Booking != null && Booking.ApprovalStatus.Equals("NA"))
+                {
+                    BookingsToReturn.Add(Booking);
+                }
+            }
+            return BookingsToReturn;
+        }
+        public List<Booking> ViewCompletedRides(string userName, OverallSupervisor supervisor)
+        {
+            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
+            List<Booking> Completed = new List<Booking>();
+            foreach(string ID in UserFound.BookingIDs)
+            {
+                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, ID)));
+                if(Booking!=null && Booking.ApprovalStatus.Equals("Accept"))
+                {
+                    Completed.Add(Booking);
+                }
+            }
+            return Completed;
+        }
+       
     }
 }

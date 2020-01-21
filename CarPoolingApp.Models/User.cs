@@ -9,14 +9,18 @@ namespace CarPoolingApp.Models
         public string UserName { get; set; }
         public string Password { get; set; }
         public string UserID { get; }
+        public int Debt { get; set; }
+        public string SecurityAnswer { get; set; }
         public List<string> Offers = new List<string>();
         public List<string> BookingIDs = new List<string>();
 
-        public User(string userName, string password)
+        public User(string userName, string password, string answer)
         {
             this.UserName = userName;
             this.Password = password;
+            this.Debt = 0;
             this.UserID = "USR" + DateTime.Now.ToString();
+            this.SecurityAnswer = answer;
         }
     }
 }

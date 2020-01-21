@@ -6,12 +6,10 @@ namespace CarPoolingApp.Helpers
 {
     public class LoginHelper
     {
-        User AccountToBeValidated;
         OverallSupervisor Supervisor;
 
-        public LoginHelper(User user, OverallSupervisor supervisor)
+        public LoginHelper(OverallSupervisor supervisor)
         {
-            this.AccountToBeValidated = user;
             this.Supervisor = supervisor;
         }
 

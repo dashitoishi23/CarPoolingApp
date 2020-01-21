@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +10,11 @@
     <PackageReference Include="RestSharp" Version="106.10.1" />
     <PackageReference Include="ServiceStack.Text" Version="5.8.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj" />
+    <ProjectReference Include="..\CarPoolingApp.Services\CarPoolingApp.Services.csproj" />
   </ItemGroup>
 
 </Project>
