@@ -40,7 +40,6 @@ namespace CarPoolingApp.Models
             // $
             this.DateCreated = DateTime.Now;
             this.ApprovalStatus = BookingConfirmationTypes.None;
-            // *# $ $*
             this.BookingID = IDGenerator.GenerateID();
             // $
             this.Price = this.Distance * costPerKm;
