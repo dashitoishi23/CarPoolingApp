@@ -9,7 +9,10 @@ namespace CarPoolingApp.Services
     {
         public decimal TopUpWallet(ref OverallSupervisor supervisor, string userName, decimal money)
         {
+
+            // * ** @ - refer to the comments in BookingServiceProvider.cs
             var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
+            // ** @ - refer to the comments in BookingServiceProvider.cs
             var Wallet = supervisor.Wallets.Find(_ => (string.Equals(_.UserID, UserFound.UserID)));
             supervisor.Wallets.Remove(Wallet);
             Wallet.Funds += money;

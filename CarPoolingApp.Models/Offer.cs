@@ -12,6 +12,8 @@ namespace CarPoolingApp.Models
         public string StartPoint { get; set; }
         public List<string> ViaPoints { get; set; } = new List<string>();
         public string EndPoint { get; set; }
+
+        // @
         public string ID { get; set; }
         public string CarModel { get; set; }
         public string UserID { get; set; }
@@ -24,8 +26,9 @@ namespace CarPoolingApp.Models
             this.ViaPoints = viaPoints;
             this.EndPoint = endPoint;
             this.CarModel = carModel;
-            this.UserID = userID;
-            this.ID = GUIDGenerator.GenerateID();
+            
+            // *# $
+            this.ID = IDGenerator.GenerateID();
         }
 
     }

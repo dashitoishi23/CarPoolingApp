@@ -9,6 +9,8 @@ namespace CarPoolingApp.Models
     {
         public string UserName { get; set; }
         public string Password { get; set; }
+
+        // $*
         public string UserID { get; }
         public int Debt { get; set; }
         public string SecurityAnswer { get; set; }
@@ -21,7 +23,8 @@ namespace CarPoolingApp.Models
             this.UserName = userName;
             this.Password = password;
             this.Debt = 0;
-            this.UserID = GUIDGenerator.GenerateID();
+            // *# $ $*
+            this.UserID = IDGenerator.GenerateID();
             this.SecurityAnswer = answer;
             this.WalletID = walletID;
         }

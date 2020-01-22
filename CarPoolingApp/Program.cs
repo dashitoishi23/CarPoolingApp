@@ -8,6 +8,8 @@ namespace CarPoolingApp
 {
     public class Program
     {
+        // If you think it is useful and can avoid fetching user object everytime you could have complete User object instead of just user name.
+        // @ only constants are all upper.
         static string USERNAME = "";
         static OverallSupervisor Supervisor = new OverallSupervisor();
         static void Main(string[] args)
@@ -26,14 +28,18 @@ namespace CarPoolingApp
                 }
                 Console.WriteLine("2. Signup");
                 Console.WriteLine("3. Forgot Password");
+                //@
                 int UserInput = Convert.ToInt32(Console.ReadLine());
                 switch (UserInput)
                 {
                     case 1:
                         Console.WriteLine("Enter your username");
+                        //@
                         string UserName = Console.ReadLine();
                         Console.WriteLine("Enter your password");
+                        //@
                         string Password = Console.ReadLine();
+                        //@
                         LoginHelper Authenticator = new LoginHelper(Supervisor);
                         if(Authenticator.LoginValidator(UserName, Password) == null)
                         {
@@ -53,6 +59,7 @@ namespace CarPoolingApp
                         Password = Console.ReadLine();
                         Console.WriteLine("What was the name of your first school?");
                         string Answer = Console.ReadLine();
+                        //@ aslo Signer is an improper variable name.
                         SignupHelper Signer = new SignupHelper();
                         try
                         {
@@ -66,6 +73,7 @@ namespace CarPoolingApp
                         }
                         break;
                     case 3:
+                        //@
                         ForgotPasswordHelper ResetPasswordService = new ForgotPasswordHelper();
                         Console.WriteLine("Enter the user name of the account");
                         UserName = Console.ReadLine();
@@ -99,6 +107,7 @@ namespace CarPoolingApp
             int UserInput = Convert.ToInt32(Console.ReadLine());
             switch (UserInput)
             {
+                // Use suffix(as flows for example) to these methods to know that these are flows not just actions.
                 case 1:
                     CreateOffer();
                     break;
@@ -144,20 +153,26 @@ namespace CarPoolingApp
             else
             {
                 Console.WriteLine("Determine a cost per km");
+                //@
                 int CostPerKm = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Decide a starting point for the ride");
+                //@
                 string StartPoint = Console.ReadLine();
                 Console.WriteLine("Decide upto 3 via points (Seperate the points with a space)");
+                //@
                 string ViaPoints = Console.ReadLine();
                 if(ViaPoints.Split(' ').Length > 3)
                 {
                     CreateOffer();
                 }
                 Console.WriteLine("Decide an ending point");
+                //@
                 string EndPoint = Console.ReadLine();
                 Console.WriteLine("Enter max number of people");
+                //@
                 int MaxPeople = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter the car you are using");
+                //@
                 string CarModel = Console.ReadLine();
                 offerService.CreateOffer(ref Supervisor, USERNAME, StartPoint, ViaPoints, EndPoint, CostPerKm, MaxPeople, CarModel);
             }
@@ -166,6 +181,7 @@ namespace CarPoolingApp
         static void MakeBooking()
         {
             BookingServiceProvider bookingService = new BookingServiceProvider();
+            //@
             List<Offer> AvailableOffers = Supervisor.Offers.FindAll(_=>(!string.Equals(_.UserID,Supervisor.Accounts.Find(u=>(string.Equals(u.UserName, USERNAME))).UserID)));
             if (AvailableOffers.ToArray().Length != 0)
             {
@@ -183,6 +199,7 @@ namespace CarPoolingApp
                     Console.WriteLine("Car Model" + display.CarModel);
                 }
                 Console.WriteLine("Enter offer ID");
+                // @
                 string OfferID = Console.ReadLine();
                 try
                 {
@@ -202,6 +219,7 @@ namespace CarPoolingApp
         static void ViewOffers()
         {
             OfferServiceProvider offerService = new OfferServiceProvider();
+            //@
             List<Offer> OffersToDisplay = offerService.ViewOffers(USERNAME, ref Supervisor);
             foreach (Offer display in OffersToDisplay)
             {
@@ -249,8 +267,10 @@ namespace CarPoolingApp
                 Console.WriteLine("Price: Rs. " + display.Price);
             }
             Console.WriteLine("Enter Booking ID");
+            //@
             string BookingID = Console.ReadLine();
             Console.WriteLine("Enter a response (1 to accept and 2 to reject");
+            //@
             int Response = Convert.ToInt32(Console.ReadLine());
             if (Response != 1 || Response != 2)
             {
@@ -272,6 +292,7 @@ namespace CarPoolingApp
         static void RideHistory()
         {
             BookingServiceProvider bookingService = new BookingServiceProvider();
+            //@
             List<Booking> Completed = bookingService.ViewCompletedRides(USERNAME, Supervisor);
             foreach (Booking display in Completed)
             {
