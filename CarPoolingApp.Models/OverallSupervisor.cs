@@ -8,5 +8,6 @@ namespace CarPoolingApp.Models
         public List<User> Accounts = new List<User>();
         public List<Offer> Offers = new List<Offer>();
         public List<Booking> Bookings = new List<Booking>();
+        public List<Wallet> Wallets = new List<Wallet>();
     }
 }

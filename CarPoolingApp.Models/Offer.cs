@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CarPoolingApp.Helpers;
 
 namespace CarPoolingApp.Models
 {
@@ -9,7 +10,7 @@ namespace CarPoolingApp.Models
         public int CostPerKm { get; set; }
         public int MaximumPeople { get; set; }
         public string StartPoint { get; set; }
-        public List<string> ViaPoints = new List<string>();
+        public List<string> ViaPoints { get; set; } = new List<string>();
         public string EndPoint { get; set; }
         public string ID { get; set; }
         public string CarModel { get; set; }
@@ -22,7 +23,7 @@ namespace CarPoolingApp.Models
             this.ViaPoints = viaPoints;
             this.EndPoint = endPoint;
             this.CarModel = carModel;
-            this.ID = "OFR" + DateTime.Now.ToString();
+            this.ID = IDGenerator.GenerateID();
         }
 
     }

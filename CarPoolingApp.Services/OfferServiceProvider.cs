@@ -10,7 +10,8 @@ namespace CarPoolingApp.Services
     {
         public void CreateOffer(ref OverallSupervisor supervisor, string userName, string startPoint, string viaPoints, string endPoint, int cost, int maxPeople, string carModel)
         {
-            List<string> ViaPoints = (List<string>)viaPoints.Split(' ').Take(3);
+            string[] points = viaPoints.Split(' ');
+            List<string> ViaPoints = points.ToList();
             Offer NewOffer = new Offer(cost, maxPeople, startPoint, ViaPoints, endPoint, carModel);
             var UserFounds = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
             supervisor.Accounts.Remove(UserFounds);

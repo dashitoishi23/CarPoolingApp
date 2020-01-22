@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using CarPoolingApp.Models;
 
-namespace CarPoolingApp.Helpers
+namespace CarPoolingApp.Services
 {
     public class ForgotPasswordHelper
     {

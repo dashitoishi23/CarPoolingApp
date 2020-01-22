@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CarPoolingApp.Helpers;
 
 namespace CarPoolingApp.Models
 {
@@ -13,14 +14,16 @@ namespace CarPoolingApp.Models
         public string SecurityAnswer { get; set; }
         public List<string> Offers = new List<string>();
         public List<string> BookingIDs = new List<string>();
+        public string WalletID { get; set; }
 
-        public User(string userName, string password, string answer)
+        public User(string userName, string password, string answer, string walletID)
         {
             this.UserName = userName;
             this.Password = password;
             this.Debt = 0;
-            this.UserID = "USR" + DateTime.Now.ToString();
+            this.UserID = IDGenerator.GenerateID();
             this.SecurityAnswer = answer;
+            this.WalletID = walletID;
         }
     }
 }

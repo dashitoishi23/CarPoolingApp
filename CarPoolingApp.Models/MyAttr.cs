@@ -4,10 +4,8 @@ using System.Text;
 
 namespace CarPoolingApp.Models
 {
-    public enum BookingConfirmationTypes
+    class MyAttr : Attribute
     {
-        Accept,
-        Reject,
-        None
+
     }
 }

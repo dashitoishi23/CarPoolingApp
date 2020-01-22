@@ -129,15 +129,19 @@ namespace CarPoolingApp
                 string StartPoint = Console.ReadLine();
                 Console.WriteLine("Decide upto 3 via points (Seperate the points with a space)");
                 string ViaPoints = Console.ReadLine();
+                if(ViaPoints.Split(' ').Length > 3)
+                {
+                    CreateOffer();
+                }
                 Console.WriteLine("Decide an ending point");
                 string EndPoint = Console.ReadLine();
-                Console.WriteLine("Decide on the cost!");
-                int Cost = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter max number of people");
                 int MaxPeople = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter the car you are using");
                 string CarModel = Console.ReadLine();
+                offerService.CreateOffer(ref Supervisor, USERNAME, StartPoint, ViaPoints, EndPoint, CostPerKm, MaxPeople, CarModel);
             }
+            Menu();
         }
         static void MakeBooking()
         {
@@ -166,6 +170,7 @@ namespace CarPoolingApp
             {
                 Console.WriteLine(e);
            }
+            Menu();
         }
         static void ViewOffers()
         {
@@ -184,6 +189,7 @@ namespace CarPoolingApp
                 Console.WriteLine("Maximum People" + display.MaximumPeople);
                 Console.WriteLine("Car Model" + display.CarModel);
             }
+            Menu();
         }
         static void ViewBookings()
         {
@@ -199,6 +205,7 @@ namespace CarPoolingApp
                 Console.WriteLine("Distance " + display.Distance);
                 Console.WriteLine("Price: Rs. " + display.Price);
             }
+            Menu();
         }
         static void ConfirmBooking()
         {
@@ -233,6 +240,7 @@ namespace CarPoolingApp
                     Console.WriteLine(e);
                 }
             }
+            Menu();
         }
         static void RideHistory()
         {
@@ -248,10 +256,15 @@ namespace CarPoolingApp
                 Console.WriteLine("Distance " + display.Distance);
                 Console.WriteLine("Price: Rs. " + display.Price);
             }
+            Menu();
         }
         static void TopUpWallet()
         {
-
+            Console.WriteLine("Amount to be topped up");
+            WalletServiceProvider walletService = new WalletServiceProvider();
+            decimal money = Convert.ToDecimal(Console.ReadLine());
+            Console.WriteLine("Funds in the wallet now are:-" + walletService.TopUpWallet(ref Supervisor, USERNAME, money));
+            Menu();
         }
         static void Payment()
         {

@@ -8,13 +8,15 @@ using RestSharp;
 using Flurl.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using CarPoolingApp.Helpers;
 
 namespace CarPoolingApp.Models
 {
     public class Booking
     {
+        [MyAttr]
         public string BookingID { get; set; }
-        public string ApprovalStatus { get; set; }
+        public BookingConfirmationTypes ApprovalStatus { get; set; }
         public DateTime DateCreated { get; }
         public string OfferID { get; set; }
         public string StartPoint { get; set; }
@@ -28,10 +30,11 @@ namespace CarPoolingApp.Models
             this.StartPoint = startPoint;
             this.EndPoint = endPoint;
             this.Distance = 20;
-            this.Price = this.Distance * costPerKm;
             this.DateCreated = DateTime.Now;
-            this.ApprovalStatus = "NA";
-            this.BookingID = "BKN" + DateTime.Now.ToString();
+            this.ApprovalStatus = BookingConfirmationTypes.None;
+            this.BookingID = IDGenerator.GenerateID();
+            this.Price = this.Distance * costPerKm;
+            this.GetType().GetProperties();
         }
 
 

@@ -13,7 +13,7 @@ namespace CarPoolingApp.Services
             var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
             foreach (Booking booking in supervisor.Bookings)
             {
-                if (booking.ApprovalStatus.Equals("NA"))
+                if (booking.ApprovalStatus.Equals(BookingConfirmationTypes.None))
                 {
                     foreach (string offerID in UserFound.Offers)
                     {
@@ -62,7 +62,7 @@ namespace CarPoolingApp.Services
             {
                 throw new Exception("Invalid Booking ID");
             }
-            BookingFound.ApprovalStatus = response == 1 ? BookingConfirmationTypes.Accept.ToString() : BookingConfirmationTypes.Reject.ToString();
+            BookingFound.ApprovalStatus = response == 1 ? BookingConfirmationTypes.Accept : BookingConfirmationTypes.Reject;
         }
         public static List<Booking> UsersBookingsGenerator(string userName, OverallSupervisor supervisor)
         {
@@ -71,7 +71,7 @@ namespace CarPoolingApp.Services
             foreach(string offerID in UserFound.Offers)
             {
                 var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.OfferID, offerID)));
-                if (Booking != null && Booking.ApprovalStatus.Equals("NA"))
+                if (Booking != null && Booking.ApprovalStatus.Equals(BookingConfirmationTypes.None))
                 {
                     BookingsToReturn.Add(Booking);
                 }
@@ -85,7 +85,7 @@ namespace CarPoolingApp.Services
             foreach(string ID in UserFound.BookingIDs)
             {
                 var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, ID)));
-                if(Booking!=null && Booking.ApprovalStatus.Equals("Accept"))
+                if(Booking!=null && Booking.ApprovalStatus.Equals(BookingConfirmationTypes.Accept))
                 {
                     Completed.Add(Booking);
                 }

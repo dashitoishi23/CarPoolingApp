@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using CarPoolingApp.Models;
+using CarPoolingApp.Helpers;
 
-namespace CarPoolingApp.Helpers
+namespace CarPoolingApp.Services
 {
     public class SignupHelper
     {
@@ -18,7 +19,10 @@ namespace CarPoolingApp.Helpers
                 {
                     throw new Exception("User exists");
                 }
-                NewUser = new User(userName, password, answer);
+                Wallet NewWallet = new Wallet(IDGenerator.GenerateID());
+                NewUser = new User(userName, password, answer, NewWallet.ID);
+                NewWallet.UserID = NewUser.UserID;
+                supervisor.Wallets.Add(NewWallet);
                 break;
             }
             supervisor.Accounts.Add(NewUser);
