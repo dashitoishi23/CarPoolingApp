@@ -25,7 +25,7 @@ namespace CarPoolingApp.Models
             this.EndPoint = endPoint;
             this.CarModel = carModel;
             this.UserID = userID;
-            this.ID = IDGenerator.GenerateID();
+            this.ID = GUIDGenerator.GenerateID();
         }
 
     }

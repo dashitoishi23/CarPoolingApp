@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CarPoolingApp.Helpers
 {
-    public class IDGenerator
+    public class GUIDGenerator
     {
         public static string GenerateID()
         {

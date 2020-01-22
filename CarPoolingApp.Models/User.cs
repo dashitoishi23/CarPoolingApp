@@ -21,7 +21,7 @@ namespace CarPoolingApp.Models
             this.UserName = userName;
             this.Password = password;
             this.Debt = 0;
-            this.UserID = IDGenerator.GenerateID();
+            this.UserID = GUIDGenerator.GenerateID();
             this.SecurityAnswer = answer;
             this.WalletID = walletID;
         }

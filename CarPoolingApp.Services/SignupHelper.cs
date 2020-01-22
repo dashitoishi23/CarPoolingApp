@@ -19,7 +19,7 @@ namespace CarPoolingApp.Services
                 {
                     throw new Exception("User exists");
                 }
-                Wallet NewWallet = new Wallet(IDGenerator.GenerateID());
+                Wallet NewWallet = new Wallet(GUIDGenerator.GenerateID());
                 NewUser = new User(userName, password, answer, NewWallet.ID);
                 NewWallet.UserID = NewUser.UserID;
                 supervisor.Wallets.Add(NewWallet);

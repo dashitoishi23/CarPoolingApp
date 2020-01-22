@@ -33,7 +33,7 @@ namespace CarPoolingApp.Models
             this.Distance = 20;
             this.DateCreated = DateTime.Now;
             this.ApprovalStatus = BookingConfirmationTypes.None;
-            this.BookingID = IDGenerator.GenerateID();
+            this.BookingID = GUIDGenerator.GenerateID();
             this.Price = this.Distance * costPerKm;
             this.GetType().GetProperties();
             this.IsPaid = false;
