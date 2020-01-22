@@ -14,7 +14,13 @@ namespace CarPoolingApp.Models
 {
     public class Booking
     {
+
+        // $ Generated property values can directly be generated in getters. (optional)And default properties also can be directly assigned.
+
+        // $* Avoid using the class name for the Id of that class.
         [MyAttr]
+
+        // $*
         public string BookingID { get; set; }
         public BookingConfirmationTypes ApprovalStatus { get; set; }
         public DateTime DateCreated { get; }
@@ -30,9 +36,12 @@ namespace CarPoolingApp.Models
             this.StartPoint = startPoint;
             this.EndPoint = endPoint;
             this.Distance = 20;
+            // $
             this.DateCreated = DateTime.Now;
             this.ApprovalStatus = BookingConfirmationTypes.None;
+            // *# $ $*
             this.BookingID = IDGenerator.GenerateID();
+            // $
             this.Price = this.Distance * costPerKm;
             this.GetType().GetProperties();
         }
