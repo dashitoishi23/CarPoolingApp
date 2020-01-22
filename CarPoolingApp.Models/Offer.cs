@@ -14,8 +14,9 @@ namespace CarPoolingApp.Models
         public string EndPoint { get; set; }
         public string ID { get; set; }
         public string CarModel { get; set; }
+        public string UserID { get; set; }
 
-        public Offer(int costPerKm, int maximumPeople, string startPoint, List<string> viaPoints, string endPoint, string carModel)
+        public Offer(int costPerKm, int maximumPeople, string startPoint, List<string> viaPoints, string endPoint, string carModel, string userID)
         {
             this.CostPerKm = costPerKm;
             this.MaximumPeople = maximumPeople;
@@ -23,6 +24,7 @@ namespace CarPoolingApp.Models
             this.ViaPoints = viaPoints;
             this.EndPoint = endPoint;
             this.CarModel = carModel;
+            this.UserID = userID;
             this.ID = IDGenerator.GenerateID();
         }
 

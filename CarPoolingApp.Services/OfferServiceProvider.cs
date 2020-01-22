@@ -12,8 +12,8 @@ namespace CarPoolingApp.Services
         {
             string[] points = viaPoints.Split(' ');
             List<string> ViaPoints = points.ToList();
-            Offer NewOffer = new Offer(cost, maxPeople, startPoint, ViaPoints, endPoint, carModel);
             var UserFounds = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
+            Offer NewOffer = new Offer(cost, maxPeople, startPoint, ViaPoints, endPoint, carModel, UserFounds.UserID);
             supervisor.Accounts.Remove(UserFounds);
             UserFounds.Offers.Add(NewOffer.ID);
             supervisor.Offers.Add(NewOffer);

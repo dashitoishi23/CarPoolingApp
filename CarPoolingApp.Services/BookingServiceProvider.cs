@@ -92,6 +92,20 @@ namespace CarPoolingApp.Services
             }
             return Completed;
         }
+        public List<Booking> ViewDebtedBookings(ref OverallSupervisor supervisor, string userName)
+        {
+            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
+            List<Booking> DebtedBookings = new List<Booking>();
+            foreach(string bookingID in UserFound.BookingIDs)
+            {
+                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, bookingID)));
+                if (Booking.ApprovalStatus.Equals(BookingConfirmationTypes.Accept) && Booking.IsPaid.Equals(false))
+                {
+                    DebtedBookings.Add(Booking);
+                }
+            }
+            return DebtedBookings;
+        }
        
     }
 }

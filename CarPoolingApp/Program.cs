@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolingApp.Helpers;
 using CarPoolingApp.Models;
 using CarPoolingApp.Services;
+using System.Linq;
 
 namespace CarPoolingApp
 {
@@ -16,7 +16,14 @@ namespace CarPoolingApp
             {
 
                 Console.WriteLine("Welcome to the app");
-                Console.WriteLine("1. Login");
+                if (USERNAME.Equals(""))
+                {
+                    Console.WriteLine("1. Login");
+                }
+                else
+                {
+                    Console.WriteLine("2. Continue as " + USERNAME);
+                }
                 Console.WriteLine("2. Signup");
                 Console.WriteLine("3. Forgot Password");
                 int UserInput = Convert.ToInt32(Console.ReadLine());
@@ -50,6 +57,8 @@ namespace CarPoolingApp
                         try
                         {
                             Signer.SignupService(ref Supervisor, UserName, Password, Answer);
+                            USERNAME = UserName;
+                            Menu();
                         }
                         catch(Exception e)
                         {
@@ -60,7 +69,14 @@ namespace CarPoolingApp
                         ForgotPasswordHelper ResetPasswordService = new ForgotPasswordHelper();
                         Console.WriteLine("Enter the user name of the account");
                         UserName = Console.ReadLine();
-                        ResetPasswordService.ForgotPasswordService(ref Supervisor, UserName);
+                        try
+                        {
+                            ResetPasswordService.ForgotPasswordService(ref Supervisor, UserName);
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
                         break;
                 }
             }
@@ -68,6 +84,7 @@ namespace CarPoolingApp
         static void Menu()
         {
             Console.Clear();
+            Console.WriteLine("Logged in as " + USERNAME);
             Console.WriteLine("Please choose an option");
             Console.WriteLine("1. Create an offer");
             Console.WriteLine("2. Make a booking");
@@ -104,11 +121,14 @@ namespace CarPoolingApp
                     TopUpWallet();
                     break;
                 case 8:
+                    Payment();
                     break;
                 case 9:
+                    ViewDebts();
                     break;
                 case 10:
-                    System.Environment.Exit(0);
+                    Console.WriteLine("Logging out..");
+                    USERNAME = "";
                     break;
             }
         }
@@ -141,36 +161,43 @@ namespace CarPoolingApp
                 string CarModel = Console.ReadLine();
                 offerService.CreateOffer(ref Supervisor, USERNAME, StartPoint, ViaPoints, EndPoint, CostPerKm, MaxPeople, CarModel);
             }
-            Menu();
+
         }
         static void MakeBooking()
         {
             BookingServiceProvider bookingService = new BookingServiceProvider();
-            List<Offer> AvailableOffers = Supervisor.Offers;
-            foreach(Offer display in AvailableOffers)
+            List<Offer> AvailableOffers = Supervisor.Offers.FindAll(_=>(!string.Equals(_.UserID,Supervisor.Accounts.Find(u=>(string.Equals(u.UserName, USERNAME))).UserID)));
+            if (AvailableOffers.ToArray().Length != 0)
             {
-                Console.WriteLine("ID:" + display.ID);
-                Console.WriteLine("Start point " + display.StartPoint);
-                foreach(string point in display.ViaPoints)
+                foreach (Offer display in AvailableOffers)
                 {
-                    Console.Write(point + ", ");
+                    Console.WriteLine("ID:" + display.ID);
+                    Console.WriteLine("Start point " + display.StartPoint);
+                    foreach (string point in display.ViaPoints)
+                    {
+                        Console.Write(point + ", ");
+                    }
+                    Console.WriteLine("End point " + display.EndPoint);
+                    Console.WriteLine("Cost Per KM " + display.CostPerKm);
+                    Console.WriteLine("Maximum People" + display.MaximumPeople);
+                    Console.WriteLine("Car Model" + display.CarModel);
                 }
-                Console.WriteLine("End point " + display.EndPoint);
-                Console.WriteLine("Cost Per KM " + display.CostPerKm);
-                Console.WriteLine("Maximum People" + display.MaximumPeople);
-                Console.WriteLine("Car Model" + display.CarModel);
+                Console.WriteLine("Enter offer ID");
+                string OfferID = Console.ReadLine();
+                try
+                {
+                    bookingService.MakeBooking(OfferID, USERNAME, ref Supervisor);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
-            Console.WriteLine("Enter offer ID");
-            string OfferID = Console.ReadLine();
-            try
+            else
             {
-                bookingService.MakeBooking(OfferID, USERNAME, ref Supervisor);
+                Console.WriteLine("No offers made by any user");
             }
-            catch(Exception e)
-            {
-                Console.WriteLine(e);
-           }
-            Menu();
+
         }
         static void ViewOffers()
         {
@@ -189,7 +216,7 @@ namespace CarPoolingApp
                 Console.WriteLine("Maximum People" + display.MaximumPeople);
                 Console.WriteLine("Car Model" + display.CarModel);
             }
-            Menu();
+
         }
         static void ViewBookings()
         {
@@ -205,7 +232,7 @@ namespace CarPoolingApp
                 Console.WriteLine("Distance " + display.Distance);
                 Console.WriteLine("Price: Rs. " + display.Price);
             }
-            Menu();
+
         }
         static void ConfirmBooking()
         {
@@ -240,7 +267,7 @@ namespace CarPoolingApp
                     Console.WriteLine(e);
                 }
             }
-            Menu();
+
         }
         static void RideHistory()
         {
@@ -256,23 +283,56 @@ namespace CarPoolingApp
                 Console.WriteLine("Distance " + display.Distance);
                 Console.WriteLine("Price: Rs. " + display.Price);
             }
-            Menu();
+
         }
         static void TopUpWallet()
         {
             Console.WriteLine("Amount to be topped up");
             WalletServiceProvider walletService = new WalletServiceProvider();
             decimal money = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine("Funds in the wallet now are:-" + walletService.TopUpWallet(ref Supervisor, USERNAME, money));
-            Menu();
+            Console.WriteLine("Funds in the wallet now are Rs. " + walletService.TopUpWallet(ref Supervisor, USERNAME, money));
+
         }
         static void Payment()
         {
-
+            BookingServiceProvider bookingService = new BookingServiceProvider();
+            WalletServiceProvider walletService = new WalletServiceProvider();
+            List<Booking> Completed = bookingService.ViewCompletedRides(USERNAME, Supervisor);
+            if(Completed.ToArray().Length == 0)
+            {
+                Console.WriteLine("No trips made so far!");
+                Menu();
+            }
+            else
+            {
+                List<Booking> SortedBookings = Completed.OrderByDescending(o => o.DateCreated).ToList();
+                Console.WriteLine("Your last ride from " + SortedBookings.ElementAt(0).StartPoint + " to " + SortedBookings.ElementAt(0).EndPoint + " amounts to Rs. " + SortedBookings.ElementAt(0).Price);
+                if(walletService.IsFundSufficient(ref Supervisor, USERNAME, SortedBookings.ElementAt(0).Price)){
+                    decimal LeftMoney = walletService.DeductWalletFund(ref Supervisor, USERNAME, SortedBookings.ElementAt(0).Price);
+                    Supervisor.Bookings.Remove(SortedBookings.ElementAt(0));
+                    SortedBookings.ElementAt(0).IsPaid = true;
+                    Supervisor.Bookings.Add(SortedBookings.ElementAt(0));
+                    Console.WriteLine("Money left is Rs. " + LeftMoney);
+                }
+                else
+                {
+                    Console.WriteLine("Wallet money not sufficient");
+                    Console.WriteLine("Redirecting to Top Up!");
+                    TopUpWallet();
+                }
+            }
         }
         static void ViewDebts()
         {
-
+            BookingServiceProvider bookingService = new BookingServiceProvider();
+            List<Booking> DebtedBookings = bookingService.ViewDebtedBookings(ref Supervisor, USERNAME);
+            foreach(Booking booking in DebtedBookings)
+            {
+                Console.WriteLine("BookingID" + booking.BookingID);
+                Console.WriteLine("From" + booking.StartPoint);
+                Console.WriteLine("To" + booking.EndPoint);
+                Console.WriteLine("To Pay: Rs. " + booking.Price);
+            }
         }
     }
 }

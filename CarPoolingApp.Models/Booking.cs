@@ -23,6 +23,7 @@ namespace CarPoolingApp.Models
         public string EndPoint { get; set;}
         public int Distance { get; set; }
         public int Price { get; set; }
+        public bool IsPaid { get; set; }
 
         public Booking(string offerID, string startPoint, string endPoint, int costPerKm)
         {
@@ -35,6 +36,7 @@ namespace CarPoolingApp.Models
             this.BookingID = IDGenerator.GenerateID();
             this.Price = this.Distance * costPerKm;
             this.GetType().GetProperties();
+            this.IsPaid = false;
         }
 
 
