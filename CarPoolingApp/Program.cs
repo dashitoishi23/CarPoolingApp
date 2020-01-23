@@ -221,10 +221,10 @@ namespace CarPoolingApp
             List<Offer> availableOffers = offerService.ViewAllOffersOtherThanUser();
             if (availableOffers.ToArray().Length != 0)
             {
-                foreach(Attribute attr in Attribute.GetCustomAttributes())
-                {
 
-                    Console.WriteLine(attr.ToString());
+                foreach(var offer in availableOffers)
+                {
+                    DisplayAttributes<Offer>(offer);
                 }
                 Console.WriteLine("Enter offer ID");
                 string OfferID = Console.ReadLine();
@@ -249,16 +249,7 @@ namespace CarPoolingApp
             List<Offer> OffersToDisplay = offerService.ViewOffers();
             foreach (Offer display in OffersToDisplay)
             {
-                Console.WriteLine("ID:" + display.id);
-                Console.WriteLine("Start point " + display.startPoint);
-                foreach (string point in display.viaPoints)
-                {
-                    Console.Write(point + ", ");
-                }
-                Console.WriteLine("End point " + display.endPoint);
-                Console.WriteLine("Cost Per KM " + display.costPerKm);
-                Console.WriteLine("Maximum People" + display.maxPeople);
-                Console.WriteLine("Car Model" + display.carModel);
+                DisplayAttributes<Offer>(display);
             }
 
         }
@@ -268,13 +259,7 @@ namespace CarPoolingApp
             List<Booking> bookingToDisplay = bookingService.ViewBookings();
             foreach(Booking display in bookingToDisplay)
             {
-                Console.WriteLine("ID: " + display.id);
-                Console.WriteLine("Start Point" + display.startPoint);
-                Console.WriteLine("End Point" + display.endPoint);
-                Console.WriteLine("Date Created" + display.dateCreated);
-                Console.WriteLine("Approval Status " + display.approvalStatus);
-                Console.WriteLine("Distance " + display.distance);
-                Console.WriteLine("Price: Rs. " + display.price);
+                DisplayAttributes<Booking>(display);
             }
 
         }
@@ -284,13 +269,7 @@ namespace CarPoolingApp
             List<Booking> bookingsMade = bookingService.UsersBookingsGenerator();
             foreach (Booking display in bookingsMade)
             {
-                Console.WriteLine("ID: " + display.id);
-                Console.WriteLine("Start Point" + display.startPoint);
-                Console.WriteLine("End Point" + display.endPoint);
-                Console.WriteLine("Date Created" + display.dateCreated);
-                Console.WriteLine("Approval Status " + display.approvalStatus);
-                Console.WriteLine("Distance " + display.distance);
-                Console.WriteLine("Price: Rs. " + display.price);
+                DisplayAttributes<Booking>(display);
             }
             Console.WriteLine("Enter Booking ID");
             string bookingID = Console.ReadLine();
@@ -319,13 +298,7 @@ namespace CarPoolingApp
             List<Booking> completed = bookingService.ViewCompletedRides();
             foreach (Booking display in completed)
             {
-                Console.WriteLine("ID: " + display.id);
-                Console.WriteLine("Start Point" + display.startPoint);
-                Console.WriteLine("End Point" + display.endPoint);
-                Console.WriteLine("Date Created" + display.dateCreated);
-                Console.WriteLine("Approval Status " + display.approvalStatus);
-                Console.WriteLine("Distance " + display.distance);
-                Console.WriteLine("Price: Rs. " + display.price);
+                DisplayAttributes<Booking>(display);
             }
 
         }
@@ -377,6 +350,15 @@ namespace CarPoolingApp
                 Console.WriteLine("From" + booking.startPoint);
                 Console.WriteLine("To" + booking.endPoint);
                 Console.WriteLine("To Pay: Rs. " + booking.price);
+            }
+        }
+        static void DisplayAttributes<T>(T objectType)
+        {
+            Type type = objectType.GetType();
+            PropertyInfo[] props = type.GetProperties();
+            foreach(var prop in props)
+            {
+                Console.WriteLine(prop.Name + " " + prop.GetValue(objectType));
             }
         }
     }

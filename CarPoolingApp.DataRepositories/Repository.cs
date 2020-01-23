@@ -1,17 +1,17 @@
-﻿using System;
+﻿using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace CarPoolingApp.DataRepositories
 {
     public class Repository<T> : IRepository<T> where T : IEntity
     {
         List<T> objects = new List<T>();
-
+        string filePath = "../../../../CarPoolingApp.Database/"+typeof(T).Name+".json";
         public Repository()
         {
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = System.IO.File.ReadAllText(filePath);
             objects = JsonConvert.DeserializeObject<List<T>>(jsonData) ?? new List<T>();
         }
@@ -19,7 +19,6 @@ namespace CarPoolingApp.DataRepositories
         public void Add(T entity)
         {
             objects.Add(entity);
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = System.IO.File.ReadAllText(filePath);
             var objectsNew = JsonConvert.DeserializeObject<List<T>>(jsonData) ?? new List<T>();
             objectsNew.Add(entity);
@@ -41,7 +40,6 @@ namespace CarPoolingApp.DataRepositories
             var entityToUpdate = objects.Find(_ => (string.Equals(_.userName, entity.userName)));
             objects.Remove(entityToUpdate);
             objects.Add(entity);
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = JsonConvert.SerializeObject(objects);
             System.IO.File.WriteAllText(filePath, jsonData);
         }
@@ -50,20 +48,17 @@ namespace CarPoolingApp.DataRepositories
             var entityToUpdate = objects.Find(_ => (string.Equals(_.id, entity.id)));
             objects.Remove(entityToUpdate);
             objects.Add(entity);
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = JsonConvert.SerializeObject(objects);
             System.IO.File.WriteAllText(filePath, jsonData);
         }
         public void Remove(T entity)
         {
             objects.Remove(entity);
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = JsonConvert.SerializeObject(objects);
             System.IO.File.WriteAllText(filePath, jsonData);
         }
         public List<T> GetAllObjects()
         {
-            var filePath = "D:/Tasks/CarPoolingApp.Database/" + typeof(T).Name + ".json";
             var jsonData = System.IO.File.ReadAllText(filePath);
             objects = JsonConvert.DeserializeObject<List<T>>(jsonData) ?? new List<T>();
             return objects;
