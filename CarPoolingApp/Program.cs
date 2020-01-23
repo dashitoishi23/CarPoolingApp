@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CarPoolingApp.DataRepositories;
 using CarPoolingApp.Services;
 using System.Linq;
+using System.Reflection;
 
 namespace CarPoolingApp
 {
@@ -74,7 +75,7 @@ namespace CarPoolingApp
                         password = Console.ReadLine();
                         Console.WriteLine("What was the name of your first school?");
                         string Answer = Console.ReadLine();
-                        SignupHelper signupService = new SignupHelper(loggedInUser);
+                        SignupHelper signupService = new SignupHelper(userName);
                         try
                         {
                             sessionUser = signupService.SignupService(userName, password, Answer);
@@ -220,18 +221,10 @@ namespace CarPoolingApp
             List<Offer> availableOffers = offerService.ViewAllOffersOtherThanUser();
             if (availableOffers.ToArray().Length != 0)
             {
-                foreach (Offer display in availableOffers)
+                foreach(Attribute attr in Attribute.GetCustomAttributes())
                 {
-                    Console.WriteLine("ID:" + display.id);
-                    Console.WriteLine("Start point " + display.startPoint);
-                    foreach (string point in display.viaPoints)
-                    {
-                        Console.Write(point + ", ");
-                    }
-                    Console.WriteLine("End point " + display.endPoint);
-                    Console.WriteLine("Cost Per KM " + display.costPerKm);
-                    Console.WriteLine("Maximum People" + display.maxPeople);
-                    Console.WriteLine("Car Model" + display.carModel);
+
+                    Console.WriteLine(attr.ToString());
                 }
                 Console.WriteLine("Enter offer ID");
                 string OfferID = Console.ReadLine();
