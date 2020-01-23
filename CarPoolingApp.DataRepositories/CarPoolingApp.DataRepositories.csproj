@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CarPoolingApp.Database\CarPoolingApp.Database.csproj" />
+    <ProjectReference Include="..\CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj" />
+    <ProjectReference Include="..\CarPoolingApp.Models\CarPoolingApp.Models.csproj" />
+  </ItemGroup>
+
+</Project>

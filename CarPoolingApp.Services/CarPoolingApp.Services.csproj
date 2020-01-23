@@ -6,13 +6,16 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RestSharp" Version="106.10.1" />
     <PackageReference Include="ServiceStack.Text" Version="5.8.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarPoolingApp.DataRepositories\CarPoolingApp.DataRepositories.csproj" />
     <ProjectReference Include="..\CarPoolingApp.Models\CarPoolingApp.Models.csproj" />
+    <ProjectReference Include="..\CarPoolingApp.StringPool\CarPoolingApp.StringPool.csproj" />
   </ItemGroup>
 
 </Project>

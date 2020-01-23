@@ -1,43 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using CarPoolingApp.Models;
+using CarPoolingApp.DataRepositories;
+using CarPoolingApp.StringPool;
 
 namespace CarPoolingApp.Services
 {
     public class ForgotPasswordHelper
     {
-        // ## No UI interactions can be performed in the service layer
-        public void ForgotPasswordService(ref OverallSupervisor supervisor, string userName)
+        public void ForgotPasswordService(string userName, string answer)
         {
-            // * ** @ - refer to the comments in BookingServiceProvider.cs
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            if(UserFound == null)
+            Repository<User> userDataAccess = new Repository<User>();
+            var userFound = userDataAccess.FindByName(userName);
+            if(userFound == null)
             {
-                throw new Exception("User does not exist");
+                throw new Exception(ExceptionMessages.VoidExistance);
             }
-            // ##
-            Console.WriteLine("What was the name of your first school");
-
-            // * ** - refer to the comments in BookingServiceProvider.cs
-            supervisor.Accounts.Remove(UserFound);
-            string Answer = Console.ReadLine();
-            if (UserFound.SecurityAnswer.Equals(Answer))
+            if (userFound.securityAnswer.Equals(answer))
             {
-                // ##
-                Console.WriteLine("Enter new password");
-
-                // * ** - refer to the comments in BookingServiceProvider.cs 
-                //##
-                UserFound.Password = Console.ReadLine();
-                // * ** - refer to the comments in BookingServiceProvider.cs
-                supervisor.Accounts.Add(UserFound);
-            }
-            else
-            {
-                // ##
-                Console.WriteLine("Wrong answer");
+                string password = Console.ReadLine();
+                userFound.password = password;
+                userDataAccess.UpdateByName(userFound);
             }
         }
     }

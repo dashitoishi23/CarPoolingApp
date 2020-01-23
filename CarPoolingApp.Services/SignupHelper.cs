@@ -1,49 +1,46 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using CarPoolingApp.Models;
 using CarPoolingApp.Helpers;
+using System.Collections.Generic;
+using CarPoolingApp.DataRepositories;
+using Newtonsoft.Json;
+using CarPoolingApp.StringPool;
 
 namespace CarPoolingApp.Services
 {
     public class SignupHelper
     {
-        // *# Ids must be generated only once within the respective class and cannot be updated by any other class at any given point.
-        // You can pass complete User Model instead of doing it individually.
-        // *** When you want to get a default object of a particular class try using the factory approach. Example below.
-
-        public void SignupService(ref OverallSupervisor supervisor, string userName, string password, string answer)
+        User userFound;
+        Repository<User> userDataAccess;
+        Repository<Wallet> walletDataAccess;
+        public SignupHelper(string userName)
         {
-            // @ - refer to the comments in BookingServiceProvider.cs
-            User NewUser;
+            userDataAccess = new Repository<User>();
+            walletDataAccess = new Repository<Wallet>();
+            userFound = userDataAccess.FindByName(userName);
+        }
+        public User SignupService(string userName, string password, string answer)
+        {
+            User newUser;
             while (true)
             {
-                // * ** @- refer to the comments in BookingServiceProvider.cs 
-                var UserDuplicate = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-                if (UserDuplicate != null)
+                if (userFound != null)
                 {
-                    throw new Exception("User exists");
+                    throw new Exception(ExceptionMessages.AlreadyExists);
                 }
-
-                // * @- refer to the comments in BookingServiceProvider.cs 
-                // *#
-                // *** - This can be chaged to 
-                // newWallet = WalletServiceProvider.GetNewWallet();
-                // GetNewWallet() can be a static method that initializes this object.
-                // This approach can be followed when you have no properties needed to create the object or the properties are automatically generated.
-                Wallet NewWallet = new Wallet(IDGenerator.GenerateID());
-
-                NewUser = new User(userName, password, answer, NewWallet.ID);
-                NewWallet.UserID = NewUser.UserID;
-
-                // * ** - refer to the comments in BookingServiceProvider.cs 
-                supervisor.Wallets.Add(NewWallet);
+                Wallet newWallet = WalletServiceProvider.GetNewWallet();
+                newUser = new User
+                {
+                    userName = userName,
+                    password = password,
+                    securityAnswer = answer
+                };
+                newUser.walletID = newWallet.id;
+                userDataAccess.Add(newUser);
+                newWallet.userID = newUser.id;
+                walletDataAccess.Add(newWallet);
                 break;
             }
-            // * ** - refer to the comments in BookingServiceProvider.cs 
-            supervisor.Accounts.Add(NewUser);
-            
+            return newUser;   
         }
     }
 }

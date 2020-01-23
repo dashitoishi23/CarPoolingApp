@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CarPoolingApp.Models;
+using CarPoolingApp.DataRepositories;
 using CarPoolingApp.Services;
 using System.Linq;
 
@@ -8,82 +8,98 @@ namespace CarPoolingApp
 {
     public class Program
     {
-        // If you think it is useful and can avoid fetching user object everytime you could have complete User object instead of just user name.
-        // @ only constants are all upper.
-        static string USERNAME = "";
-        static OverallSupervisor Supervisor = new OverallSupervisor();
+        static string loggedInUser = "";
+        static User sessionUser;
         static void Main(string[] args)
         {
+
             while(true)
             {
 
                 Console.WriteLine("Welcome to the app");
-                if (USERNAME.Equals(""))
+                if (loggedInUser.Equals(""))
                 {
                     Console.WriteLine("1. Login");
                 }
                 else
                 {
-                    Console.WriteLine("2. Continue as " + USERNAME);
+                    Console.WriteLine("1. Continue as " + loggedInUser);
                 }
                 Console.WriteLine("2. Signup");
                 Console.WriteLine("3. Forgot Password");
-                //@
-                int UserInput = Convert.ToInt32(Console.ReadLine());
-                switch (UserInput)
+                 
+                int userInput = Convert.ToInt32(Console.ReadLine());
+                switch (userInput)
                 {
                     case 1:
-                        Console.WriteLine("Enter your username");
-                        //@
-                        string UserName = Console.ReadLine();
-                        Console.WriteLine("Enter your password");
-                        //@
-                        string Password = Console.ReadLine();
-                        //@
-                        LoginHelper Authenticator = new LoginHelper(Supervisor);
-                        if(Authenticator.LoginValidator(UserName, Password) == null)
-                        {
-                            Console.WriteLine("Invalid Login or the user does not exist");
+                        string userName;
+                        string password;
+                        if (sessionUser == null) {
+                            Console.WriteLine("Enter your username");
+
+                            userName = Console.ReadLine();
+                            Console.WriteLine("Enter your password");
+
+                            password = Console.ReadLine();
+
+                            LoginHelper authenticator = new LoginHelper();
+                            try
+                            {
+                                if (authenticator.LoginValidator(userName, password) == null)
+                                {
+                                    Console.WriteLine("Invalid Login or the user does not exist");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Succesful Login");
+                                    loggedInUser = userName;
+                                    sessionUser = authenticator.LoginValidator(userName, password);
+                                    Menu();
+                                }
+                            }
+                            catch(Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("Succesful Login");
-                            USERNAME = UserName;
                             Menu();
                         }
                         break;
                     case 2:
                         Console.WriteLine("Enter a username");
-                        UserName = Console.ReadLine();
+                        userName = Console.ReadLine();
                         Console.WriteLine("Enter a password");
-                        Password = Console.ReadLine();
+                        password = Console.ReadLine();
                         Console.WriteLine("What was the name of your first school?");
                         string Answer = Console.ReadLine();
-                        //@ aslo Signer is an improper variable name.
-                        SignupHelper Signer = new SignupHelper();
+                        SignupHelper signupService = new SignupHelper(loggedInUser);
                         try
                         {
-                            Signer.SignupService(ref Supervisor, UserName, Password, Answer);
-                            USERNAME = UserName;
+                            sessionUser = signupService.SignupService(userName, password, Answer);
+                            loggedInUser = userName;
                             Menu();
                         }
                         catch(Exception e)
                         {
-                            Console.WriteLine(e);
+                            Console.WriteLine(e.Message);
                         }
                         break;
                     case 3:
-                        //@
-                        ForgotPasswordHelper ResetPasswordService = new ForgotPasswordHelper();
+
+                        ForgotPasswordHelper resetPasswordService = new ForgotPasswordHelper();
                         Console.WriteLine("Enter the user name of the account");
-                        UserName = Console.ReadLine();
+                        userName = Console.ReadLine();
                         try
                         {
-                            ResetPasswordService.ForgotPasswordService(ref Supervisor, UserName);
+                            Console.WriteLine("What is the name of your first school?");
+                            string answer = Console.ReadLine();
+                            resetPasswordService.ForgotPasswordService(userName, answer);
                         }
                         catch(Exception e)
                         {
-                            Console.WriteLine(e);
+                            Console.WriteLine(e.Message);
                         }
                         break;
                 }
@@ -92,122 +108,140 @@ namespace CarPoolingApp
         static void Menu()
         {
             Console.Clear();
-            Console.WriteLine("Logged in as " + USERNAME);
+            Console.WriteLine("Logged in as " + loggedInUser);
             Console.WriteLine("Please choose an option");
             Console.WriteLine("1. Create an offer");
             Console.WriteLine("2. Make a booking");
             Console.WriteLine("3. View all offers");
-            Console.WriteLine("4. View all bookings");
-            Console.WriteLine("5. Confirm a booking");
+            if(sessionUser.bookingIDs.ToArray().Length == 0)
+            {
+                Console.WriteLine("4. View all bookings (No bookings made)");
+            }
+            else
+            {
+                int numberBookings = sessionUser.bookingIDs.ToArray().Length;
+                Console.WriteLine("4. View all "+numberBookings+" bookings ");
+            }
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            List<Booking> pendingBookings = bookingService.GetPendingBookings();
+            if(pendingBookings.ToArray().Length == 0)
+            {
+
+                Console.WriteLine("5. Confirm a booking (No bookings to confirm)");
+            }
+            else
+            {
+                Console.WriteLine("5. You have " + pendingBookings.ToArray().Length + "bookings to confirm");
+            }
+
             Console.WriteLine("6. Ride History");
             Console.WriteLine("7. Top Up Wallet");
             Console.WriteLine("8. Payment");
             Console.WriteLine("9. Show Debts");
             Console.WriteLine("10. Logout");
-            int UserInput = Convert.ToInt32(Console.ReadLine());
-            switch (UserInput)
+            int userInput = Convert.ToInt32(Console.ReadLine());
+            switch (userInput)
             {
                 // Use suffix(as flows for example) to these methods to know that these are flows not just actions.
                 case 1:
-                    CreateOffer();
+                    CreateOfferFlow();
                     break;
                 case 2:
-                    MakeBooking();
+                    MakeBookingFlow();
                     break;
                 case 3:
-                    ViewOffers();
+                    ViewOffersFlow();
                     break;
                 case 4:
-                    ViewBookings();
+                    ViewBookingsFlow();
                     break;
                 case 5:
-                    ConfirmBooking();
+                    ConfirmBookingFlow();
                     break;
                 case 6:
-                    RideHistory();
+                    RideHistoryFlow();
                     break;
                 case 7:
-                    TopUpWallet();
+                    TopUpWalletFlow();
                     break;
                 case 8:
-                    Payment();
+                    PaymentFlow();
                     break;
                 case 9:
-                    ViewDebts();
+                    ViewDebtsFlow();
                     break;
                 case 10:
                     Console.WriteLine("Logging out..");
-                    USERNAME = "";
+                    loggedInUser = "";
+                    sessionUser = null;
                     break;
             }
         }
-        static void CreateOffer()
+        static void CreateOfferFlow()
         {
-            OfferServiceProvider offerService = new OfferServiceProvider();
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            if(bookingService.IsBookingPending(Supervisor, USERNAME))
+            OfferServiceProvider offerService = new OfferServiceProvider(loggedInUser);
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            if(bookingService.IsBookingPending(loggedInUser))
             {
                 Console.WriteLine("Please clear pending booking");
-                ConfirmBooking();
+                ConfirmBookingFlow();
             }
             else
             {
                 Console.WriteLine("Determine a cost per km");
-                //@
-                int CostPerKm = Convert.ToInt32(Console.ReadLine());
+                 
+                int costPerKm = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Decide a starting point for the ride");
-                //@
-                string StartPoint = Console.ReadLine();
+                 
+                string startPoint = Console.ReadLine();
                 Console.WriteLine("Decide upto 3 via points (Seperate the points with a space)");
-                //@
-                string ViaPoints = Console.ReadLine();
-                if(ViaPoints.Split(' ').Length > 3)
+                 
+                string viaPoints = Console.ReadLine();
+                if(viaPoints.Split(' ').Length > 3)
                 {
-                    CreateOffer();
+                    CreateOfferFlow();
                 }
                 Console.WriteLine("Decide an ending point");
-                //@
-                string EndPoint = Console.ReadLine();
+                 
+                string endPoint = Console.ReadLine();
                 Console.WriteLine("Enter max number of people");
-                //@
-                int MaxPeople = Convert.ToInt32(Console.ReadLine());
+                 
+                int maxPeople = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter the car you are using");
-                //@
-                string CarModel = Console.ReadLine();
-                offerService.CreateOffer(ref Supervisor, USERNAME, StartPoint, ViaPoints, EndPoint, CostPerKm, MaxPeople, CarModel);
+                string carModel = Console.ReadLine();
+                offerService.CreateOffer(startPoint, viaPoints, endPoint, costPerKm, maxPeople, carModel);
             }
 
         }
-        static void MakeBooking()
+        static void MakeBookingFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            //@
-            List<Offer> AvailableOffers = Supervisor.Offers.FindAll(_=>(!string.Equals(_.UserID,Supervisor.Accounts.Find(u=>(string.Equals(u.UserName, USERNAME))).UserID)));
-            if (AvailableOffers.ToArray().Length != 0)
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            OfferServiceProvider offerService = new OfferServiceProvider(loggedInUser);
+            List<Offer> availableOffers = offerService.ViewAllOffersOtherThanUser();
+            if (availableOffers.ToArray().Length != 0)
             {
-                foreach (Offer display in AvailableOffers)
+                foreach (Offer display in availableOffers)
                 {
-                    Console.WriteLine("ID:" + display.ID);
-                    Console.WriteLine("Start point " + display.StartPoint);
-                    foreach (string point in display.ViaPoints)
+                    Console.WriteLine("ID:" + display.id);
+                    Console.WriteLine("Start point " + display.startPoint);
+                    foreach (string point in display.viaPoints)
                     {
                         Console.Write(point + ", ");
                     }
-                    Console.WriteLine("End point " + display.EndPoint);
-                    Console.WriteLine("Cost Per KM " + display.CostPerKm);
-                    Console.WriteLine("Maximum People" + display.MaximumPeople);
-                    Console.WriteLine("Car Model" + display.CarModel);
+                    Console.WriteLine("End point " + display.endPoint);
+                    Console.WriteLine("Cost Per KM " + display.costPerKm);
+                    Console.WriteLine("Maximum People" + display.maxPeople);
+                    Console.WriteLine("Car Model" + display.carModel);
                 }
                 Console.WriteLine("Enter offer ID");
-                // @
                 string OfferID = Console.ReadLine();
                 try
                 {
-                    bookingService.MakeBooking(OfferID, USERNAME, ref Supervisor);
+                    bookingService.MakeBooking(OfferID);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    Console.WriteLine(e.Message);
                 }
             }
             else
@@ -216,63 +250,60 @@ namespace CarPoolingApp
             }
 
         }
-        static void ViewOffers()
+        static void ViewOffersFlow()
         {
-            OfferServiceProvider offerService = new OfferServiceProvider();
-            //@
-            List<Offer> OffersToDisplay = offerService.ViewOffers(USERNAME, ref Supervisor);
+            OfferServiceProvider offerService = new OfferServiceProvider(loggedInUser);
+            List<Offer> OffersToDisplay = offerService.ViewOffers();
             foreach (Offer display in OffersToDisplay)
             {
-                Console.WriteLine("ID:" + display.ID);
-                Console.WriteLine("Start point " + display.StartPoint);
-                foreach (string point in display.ViaPoints)
+                Console.WriteLine("ID:" + display.id);
+                Console.WriteLine("Start point " + display.startPoint);
+                foreach (string point in display.viaPoints)
                 {
                     Console.Write(point + ", ");
                 }
-                Console.WriteLine("End point " + display.EndPoint);
-                Console.WriteLine("Cost Per KM " + display.CostPerKm);
-                Console.WriteLine("Maximum People" + display.MaximumPeople);
-                Console.WriteLine("Car Model" + display.CarModel);
+                Console.WriteLine("End point " + display.endPoint);
+                Console.WriteLine("Cost Per KM " + display.costPerKm);
+                Console.WriteLine("Maximum People" + display.maxPeople);
+                Console.WriteLine("Car Model" + display.carModel);
             }
 
         }
-        static void ViewBookings()
+        static void ViewBookingsFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            List<Booking> bookingToDisplay = bookingService.ViewBookings(USERNAME, ref Supervisor);
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            List<Booking> bookingToDisplay = bookingService.ViewBookings();
             foreach(Booking display in bookingToDisplay)
             {
-                Console.WriteLine("ID: " + display.BookingID);
-                Console.WriteLine("Start Point" + display.StartPoint);
-                Console.WriteLine("End Point" + display.EndPoint);
-                Console.WriteLine("Date Created" + display.DateCreated);
-                Console.WriteLine("Approval Status " + display.ApprovalStatus);
-                Console.WriteLine("Distance " + display.Distance);
-                Console.WriteLine("Price: Rs. " + display.Price);
+                Console.WriteLine("ID: " + display.id);
+                Console.WriteLine("Start Point" + display.startPoint);
+                Console.WriteLine("End Point" + display.endPoint);
+                Console.WriteLine("Date Created" + display.dateCreated);
+                Console.WriteLine("Approval Status " + display.approvalStatus);
+                Console.WriteLine("Distance " + display.distance);
+                Console.WriteLine("Price: Rs. " + display.price);
             }
 
         }
-        static void ConfirmBooking()
+        static void ConfirmBookingFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            List<Booking> bookingsMade = BookingServiceProvider.UsersBookingsGenerator(USERNAME, Supervisor);
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            List<Booking> bookingsMade = bookingService.UsersBookingsGenerator();
             foreach (Booking display in bookingsMade)
             {
-                Console.WriteLine("ID: " + display.BookingID);
-                Console.WriteLine("Start Point" + display.StartPoint);
-                Console.WriteLine("End Point" + display.EndPoint);
-                Console.WriteLine("Date Created" + display.DateCreated);
-                Console.WriteLine("Approval Status " + display.ApprovalStatus);
-                Console.WriteLine("Distance " + display.Distance);
-                Console.WriteLine("Price: Rs. " + display.Price);
+                Console.WriteLine("ID: " + display.id);
+                Console.WriteLine("Start Point" + display.startPoint);
+                Console.WriteLine("End Point" + display.endPoint);
+                Console.WriteLine("Date Created" + display.dateCreated);
+                Console.WriteLine("Approval Status " + display.approvalStatus);
+                Console.WriteLine("Distance " + display.distance);
+                Console.WriteLine("Price: Rs. " + display.price);
             }
             Console.WriteLine("Enter Booking ID");
-            //@
-            string BookingID = Console.ReadLine();
+            string bookingID = Console.ReadLine();
             Console.WriteLine("Enter a response (1 to accept and 2 to reject");
-            //@
-            int Response = Convert.ToInt32(Console.ReadLine());
-            if (Response != 1 || Response != 2)
+            int response = Convert.ToInt32(Console.ReadLine());
+            if (response != 1 || response != 2)
             {
                 Console.WriteLine("Invalid response");
             }
@@ -280,7 +311,7 @@ namespace CarPoolingApp
             {
                 try
                 {
-                    bookingService.ConfirmBooking(Response, BookingID, Supervisor);
+                    bookingService.ConfirmBooking(response,bookingID);
                 }
                 catch(Exception e)
                 {
@@ -289,36 +320,35 @@ namespace CarPoolingApp
             }
 
         }
-        static void RideHistory()
+        static void RideHistoryFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            //@
-            List<Booking> Completed = bookingService.ViewCompletedRides(USERNAME, Supervisor);
-            foreach (Booking display in Completed)
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            List<Booking> completed = bookingService.ViewCompletedRides();
+            foreach (Booking display in completed)
             {
-                Console.WriteLine("ID: " + display.BookingID);
-                Console.WriteLine("Start Point" + display.StartPoint);
-                Console.WriteLine("End Point" + display.EndPoint);
-                Console.WriteLine("Date Created" + display.DateCreated);
-                Console.WriteLine("Approval Status " + display.ApprovalStatus);
-                Console.WriteLine("Distance " + display.Distance);
-                Console.WriteLine("Price: Rs. " + display.Price);
+                Console.WriteLine("ID: " + display.id);
+                Console.WriteLine("Start Point" + display.startPoint);
+                Console.WriteLine("End Point" + display.endPoint);
+                Console.WriteLine("Date Created" + display.dateCreated);
+                Console.WriteLine("Approval Status " + display.approvalStatus);
+                Console.WriteLine("Distance " + display.distance);
+                Console.WriteLine("Price: Rs. " + display.price);
             }
 
         }
-        static void TopUpWallet()
+        static void TopUpWalletFlow()
         {
             Console.WriteLine("Amount to be topped up");
-            WalletServiceProvider walletService = new WalletServiceProvider();
+            WalletServiceProvider walletService = new WalletServiceProvider(loggedInUser);
             decimal money = Convert.ToDecimal(Console.ReadLine());
-            Console.WriteLine("Funds in the wallet now are Rs. " + walletService.TopUpWallet(ref Supervisor, USERNAME, money));
+            Console.WriteLine("Funds in the wallet now are Rs. " + walletService.TopUpWallet( money));
 
         }
-        static void Payment()
+        static void PaymentFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            WalletServiceProvider walletService = new WalletServiceProvider();
-            List<Booking> Completed = bookingService.ViewCompletedRides(USERNAME, Supervisor);
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            WalletServiceProvider walletService = new WalletServiceProvider(loggedInUser);
+            List<Booking> Completed = bookingService.ViewCompletedRides();
             if(Completed.ToArray().Length == 0)
             {
                 Console.WriteLine("No trips made so far!");
@@ -326,33 +356,34 @@ namespace CarPoolingApp
             }
             else
             {
-                List<Booking> SortedBookings = Completed.OrderByDescending(o => o.DateCreated).ToList();
-                Console.WriteLine("Your last ride from " + SortedBookings.ElementAt(0).StartPoint + " to " + SortedBookings.ElementAt(0).EndPoint + " amounts to Rs. " + SortedBookings.ElementAt(0).Price);
-                if(walletService.IsFundSufficient(ref Supervisor, USERNAME, SortedBookings.ElementAt(0).Price)){
-                    decimal LeftMoney = walletService.DeductWalletFund(ref Supervisor, USERNAME, SortedBookings.ElementAt(0).Price);
-                    Supervisor.Bookings.Remove(SortedBookings.ElementAt(0));
-                    SortedBookings.ElementAt(0).IsPaid = true;
-                    Supervisor.Bookings.Add(SortedBookings.ElementAt(0));
+                List<Booking> SortedBookings = Completed.OrderByDescending(o => o.dateCreated).ToList();
+                Repository<Booking> bookingDataAccess = new Repository<Booking>();
+                Console.WriteLine("Your last ride from " + SortedBookings.ElementAt(0).startPoint + " to " + SortedBookings.ElementAt(0).endPoint + " amounts to Rs. " + SortedBookings.ElementAt(0).price);
+                if(walletService.IsFundSufficient(SortedBookings.ElementAt(0).price)){
+                    decimal LeftMoney = walletService.DeductWalletFund(SortedBookings.ElementAt(0).price);
+                    bookingDataAccess.Remove(SortedBookings.ElementAt(0));
+                    SortedBookings.ElementAt(0).isPaid = true;
+                    bookingDataAccess.Add(SortedBookings.ElementAt(0));
                     Console.WriteLine("Money left is Rs. " + LeftMoney);
                 }
                 else
                 {
                     Console.WriteLine("Wallet money not sufficient");
                     Console.WriteLine("Redirecting to Top Up!");
-                    TopUpWallet();
+                    TopUpWalletFlow();
                 }
             }
         }
-        static void ViewDebts()
+        static void ViewDebtsFlow()
         {
-            BookingServiceProvider bookingService = new BookingServiceProvider();
-            List<Booking> DebtedBookings = bookingService.ViewDebtedBookings(ref Supervisor, USERNAME);
+            BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);
+            List<Booking> DebtedBookings = bookingService.ViewDebtedBookings();
             foreach(Booking booking in DebtedBookings)
             {
-                Console.WriteLine("BookingID" + booking.BookingID);
-                Console.WriteLine("From" + booking.StartPoint);
-                Console.WriteLine("To" + booking.EndPoint);
-                Console.WriteLine("To Pay: Rs. " + booking.Price);
+                Console.WriteLine("BookingID" + booking.id);
+                Console.WriteLine("From" + booking.startPoint);
+                Console.WriteLine("To" + booking.endPoint);
+                Console.WriteLine("To Pay: Rs. " + booking.price);
             }
         }
     }

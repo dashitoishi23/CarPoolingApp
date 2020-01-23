@@ -1,38 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CarPoolingApp.Models;
+using CarPoolingApp.DataRepositories;
+using CarPoolingApp.Helpers;
 
 namespace CarPoolingApp.Services
 {
     public class WalletServiceProvider
     {
-        public decimal TopUpWallet(ref OverallSupervisor supervisor, string userName, decimal money)
+        User userFound;
+        Wallet wallet;
+        Repository<User> userDataAccess = new Repository<User>();
+        Repository<Wallet> walletDataAccess = new Repository<Wallet>();
+        public WalletServiceProvider(string userName)
         {
-
-            // * ** @ - refer to the comments in BookingServiceProvider.cs
-            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            // ** @ - refer to the comments in BookingServiceProvider.cs
-            var Wallet = supervisor.Wallets.Find(_ => (string.Equals(_.UserID, UserFound.UserID)));
-            supervisor.Wallets.Remove(Wallet);
-            Wallet.Funds += money;
-            supervisor.Wallets.Add(Wallet);
-            return Wallet.Funds;
+            this.userFound = userDataAccess.FindByName(userName);
+            this.wallet = walletDataAccess.FindById(userFound.walletID);
         }
-        public bool IsFundSufficient(ref OverallSupervisor supervisor, string userName, decimal toPay)
+        public decimal TopUpWallet(decimal money)
         {
-            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            var Wallet = supervisor.Wallets.Find(_ => (string.Equals(_.UserID, UserFound.UserID)));
-            return (toPay >= Wallet.Funds);
+            this.wallet.funds += money;
+            walletDataAccess.UpdateById(this.wallet);
+            return this.wallet.funds;
         }
-        public decimal DeductWalletFund(ref OverallSupervisor supervisor, string userName, decimal toPay)
+        public bool IsFundSufficient(decimal toPay)
         {
-            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            var Wallet = supervisor.Wallets.Find(_ => (string.Equals(_.UserID, UserFound.UserID)));
-            supervisor.Wallets.Remove(Wallet);
-            Wallet.Funds -= toPay;
-            supervisor.Wallets.Add(Wallet);
-            return Wallet.Funds;
+            return (toPay >= this.wallet.funds);
+        }
+        public static Wallet GetNewWallet()
+        {
+            return new Wallet(GuidGenerator.GenerateID());
+        }
+        public decimal DeductWalletFund(decimal toPay)
+        {
+            this.wallet.funds -= toPay;
+            walletDataAccess.UpdateById(this.wallet);
+            return this.wallet.funds;
         }
     }
 }

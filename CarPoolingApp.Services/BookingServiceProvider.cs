@@ -2,150 +2,129 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using CarPoolingApp.DataRepositories;
 using CarPoolingApp.Models;
+using CarPoolingApp.StringPool;
 
 namespace CarPoolingApp.Services
 {
     public class BookingServiceProvider
     {
-
-        // Design Guide: 
-        // Have OverallSupervisor and User object as properites and initialize them in constructor. That avoids passing them as parameters
-        // each and every method. Do the same with all service. This avoids fetching user each and every time.
-        // * Fetching of user cannot be done directly in Booking service provider, it has to go through the account service.
-        //        Similarly other entities and actions on them to be moved to the respective service provider.
-        // ** Avoid repitative code. you could rather move the code into a method and use it.
-        // # Avoid usage of direct strings or integers instead use Enums and constants which ever is appropriate
-        // Style Guide - Have a line break after every closing brace unless it is followed by another closing brace
-        // @ Improper Case
-
-
-
-        public bool IsBookingPending(OverallSupervisor supervisor, string userName)
+        List<Booking> bookings = new List<Booking>();
+        List<Offer> offers = new List<Offer>();
+        User user;
+        Repository<Booking> bookingDatAccess = new Repository<Booking>();
+        Repository<User> userDataAccess = new Repository<User>();
+        Repository<Offer> offerDataAccess = new Repository<Offer>();
+        public BookingServiceProvider(string username)
         {
-            // * @
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            foreach (Booking booking in supervisor.Bookings)
+            user = userDataAccess.FindByName(username);
+            bookings = bookingDatAccess.GetAllObjects();
+        }
+        public bool IsBookingPending(string userName)
+        {
+            foreach(Booking booking in bookings)
             {
-                if (booking.ApprovalStatus.Equals(BookingConfirmationTypes.None))
+                if(string.Equals(booking.userName, userName) && booking.approvalStatus.Equals(BookingConfirmationType.None))
                 {
-                    foreach (string offerID in UserFound.Offers)
-                    {
-                        if (offerID.Equals(booking.OfferID))
-                        {
-                            return true;
-                        }
-                    }
+                    return true;
                 }
             }
             return false;
         }
-        public void MakeBooking(string offerID, string userName, ref OverallSupervisor supervisor)
+        public void MakeBooking(string offerID)
         {
-            // * @
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            
-            // * @
-            var Offer = supervisor.Offers.FirstOrDefault(_ => (string.Equals(_.ID, offerID)));
-
-            // # **
-            if (Offer == null || Offer.MaximumPeople == 0)
+            var offer = offerDataAccess.FindById(offerID);
+            if (offer == null || offer.maxPeople == 0)
             {
-                throw new Exception("Offer ID invalid");
+                throw new Exception(ExceptionMessages.InvalidID);
             }
-
-            // # **
-            if (UserFound.Debt != 0)
+            if (user.debt != 0)
             {
-                throw new Exception("You have debts, please clear it");
+                throw new Exception(ExceptionMessages.Outstanding);
             }
-            Booking NewBooking = new Booking(offerID, Offer.StartPoint, Offer.EndPoint, Offer.CostPerKm);
-
-            // * **
-            Offer.MaximumPeople--;
-            // * **
-            supervisor.Accounts.Remove(UserFound);
-
-            // *
-            UserFound.BookingIDs.Add(NewBooking.BookingID);
-            
-            // **
-            supervisor.Bookings.Add(NewBooking);
-
-            // ** *
-            supervisor.Accounts.Add(UserFound);
+            Booking newBooking = new Booking(offerID, offer.startPoint, offer.endPoint, offer.costPerKm);
+            offer.maxPeople--;
+            user.bookingIDs.Add(newBooking.id);
+            bookingDatAccess.Add(newBooking);
+            userDataAccess.UpdateByName(user);
         }
-
-        // All objects are by default passed by reference. No need of ref keyword. ref is used for primitive data types.
-        public List<Booking> ViewBookings(string userName, ref OverallSupervisor supervisor)
+        public List<Booking> ViewBookings()
         {
-            // * @
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            List<Booking> Bookings = new List<Booking>();
-            foreach (string bookingID in UserFound.BookingIDs)
+            foreach (string bookingID in user.bookingIDs)
             {
-                // **
-                Bookings.Add(supervisor.Bookings.FirstOrDefault(_ => (string.Equals(_.BookingID, bookingID))));
+                bookings.Add(bookingDatAccess.FindById(bookingID));
             }
-            return Bookings;
+            return bookings;
         }
-        public void ConfirmBooking(int response, string bookingID, OverallSupervisor supervisor)
+        public void ConfirmBooking(int response, string bookingID)
         {
-            // ** @
-            var BookingFound = supervisor.Bookings.FirstOrDefault(_ => (string.Equals(_.BookingID, bookingID)));
-            if(BookingFound == null)
+            var bookingFound = bookingDatAccess.FindById(bookingID);
+            if(bookingFound == null)
             {
-                throw new Exception("Invalid Booking ID");
+                throw new Exception(ExceptionMessages.InvalidID);
             }
-
-            // #
-            BookingFound.ApprovalStatus = response == 1 ? BookingConfirmationTypes.Accept : BookingConfirmationTypes.Reject;
+            bookingFound.approvalStatus = response == 1 ? BookingConfirmationType.Accept : BookingConfirmationType.Reject;
+            bookingDatAccess.UpdateById(bookingFound);
         }
-        public static List<Booking> UsersBookingsGenerator(string userName, OverallSupervisor supervisor)
+        public List<Booking> UsersBookingsGenerator()
         {
-            // * @
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            List<Booking> BookingsToReturn = new List<Booking>();
-            foreach(string offerID in UserFound.Offers)
+            List<Booking> bookingsToReturn = new List<Booking>();
+            foreach(string offerID in user.offers)
             {
-                // ** @
-                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.OfferID, offerID)));
-                if (Booking != null && Booking.ApprovalStatus.Equals(BookingConfirmationTypes.None))
+                var Booking = bookingDatAccess.FindById(offerID);
+                if (Booking != null && Booking.approvalStatus.Equals(BookingConfirmationType.None))
                 {
-                    BookingsToReturn.Add(Booking);
+                    bookingsToReturn.Add(Booking);
                 }
             }
-            return BookingsToReturn;
+            return bookingsToReturn;
         }
-        public List<Booking> ViewCompletedRides(string userName, OverallSupervisor supervisor)
+        public List<Booking> ViewCompletedRides()
         {
-            // * @
-            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            List<Booking> Completed = new List<Booking>();
-            foreach(string ID in UserFound.BookingIDs)
+            List<Booking> completed = new List<Booking>();
+            foreach(string ID in user.bookingIDs)
             {
-                // ** @
-                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, ID)));
-                if(Booking!=null && Booking.ApprovalStatus.Equals(BookingConfirmationTypes.Accept))
+                var booking = bookingDatAccess.FindById(ID);
+                if(booking!=null && booking.approvalStatus.Equals(BookingConfirmationType.Accept))
                 {
-                    Completed.Add(Booking);
+                    completed.Add(booking);
                 }
             }
-            return Completed;
+            return completed;
         }
-        public List<Booking> ViewDebtedBookings(ref OverallSupervisor supervisor, string userName)
+        public List<Booking> ViewDebtedBookings()
         {
-            var UserFound = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            List<Booking> DebtedBookings = new List<Booking>();
-            foreach(string bookingID in UserFound.BookingIDs)
+            List<Booking> debtedBookings = new List<Booking>();
+            foreach(string bookingID in user.bookingIDs)
             {
-                var Booking = supervisor.Bookings.Find(_ => (string.Equals(_.BookingID, bookingID)));
-                if (Booking.ApprovalStatus.Equals(BookingConfirmationTypes.Accept) && Booking.IsPaid.Equals(false))
+                var Booking = bookingDatAccess.FindById(bookingID);
+                if (Booking.approvalStatus.Equals(BookingConfirmationType.Accept) && Booking.isPaid.Equals(false))
                 {
-                    DebtedBookings.Add(Booking);
+                    debtedBookings.Add(Booking);
                 }
             }
-            return DebtedBookings;
+            return debtedBookings;
+        }
+        public List<Booking> GetPendingBookings()
+        {
+            List<Booking> pendingBookings = new List<Booking>();
+            List<string> ids = user.offers;
+            foreach(Booking booking in bookings)
+            {
+                if (booking.approvalStatus.Equals(BookingConfirmationType.None))
+                {
+                    foreach(string id in ids)
+                    {
+                        if (booking.offerID.Equals(id))
+                        {
+                            pendingBookings.Add(booking);
+                            break;
+                        }
+                    }
+                }
+            }
+            return pendingBookings;
         }
        
     }

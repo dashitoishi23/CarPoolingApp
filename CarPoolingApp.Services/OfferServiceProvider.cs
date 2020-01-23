@@ -2,43 +2,59 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using CarPoolingApp.Models;
+using CarPoolingApp.DataRepositories;
 
 namespace CarPoolingApp.Services
 {
     public class OfferServiceProvider
     {
-        //Use constructor to intantiate Supervisor and user model and make them properties of this class. For explaination refer to BookinsServiceProvider.cs
-
-        // ref keyword need not be used for objects.
-        public void CreateOffer(ref OverallSupervisor supervisor, string userName, string startPoint, string viaPoints, string endPoint, int cost, int maxPeople, string carModel)
+        User userFound;
+        Repository<User> userDataAccess = new Repository<User>();
+        Repository<Offer> offerDataAccess = new Repository<Offer>();
+        List<Offer> offers;
+        public OfferServiceProvider(string userName)
         {
-            string[] points = viaPoints.Split(' ');
-            // @ -refer to the comments in BookingServiceProvider.cs
-            List<string> ViaPoints = points.ToList();
-            // @ -refer to the comments in BookingServiceProvider.cs
-            Offer NewOffer = new Offer(cost, maxPeople, startPoint, ViaPoints, endPoint, carModel);
-            // @ - refer to the comments in BookingServiceProvider.cs
-            var UserFounds = supervisor.Accounts.Find(_ => (string.Equals(_.UserName, userName)));
-            Offer NewOffer = new Offer(cost, maxPeople, startPoint, ViaPoints, endPoint, carModel, UserFounds.UserID);
-            supervisor.Accounts.Remove(UserFounds);
-            UserFounds.Offers.Add(NewOffer.ID);
-            supervisor.Offers.Add(NewOffer);
-            supervisor.Accounts.Add(UserFounds);
+            userFound = userDataAccess.FindByName(userName);
+            offers = offerDataAccess.GetAllObjects();
         }
-
-        // ref keyword need not be used for objects.
-        public List<Offer> ViewOffers(string userName, ref OverallSupervisor supervisor)
+        public void CreateOffer(string startPoint, string viaPointsList, string endPoint, int cost, int maxPeople, string carModel)
         {
-            // @ - refer to the comments in BookingServiceProvider.cs
-            var UserFound = supervisor.Accounts.FirstOrDefault(_ => (string.Equals(_.UserName, userName)));
-            // @ - refer to the comments in BookingServiceProvider.cs
+            string[] points = viaPointsList.Split(' ');
+            List<string> viaPoints = points.ToList();
+            Offer newOffer = new Offer(cost, maxPeople, startPoint, viaPoints, endPoint, carModel, userFound.id);
+            userFound.offers.Add(newOffer.id);
+            userDataAccess.UpdateByName(userFound);
+            offerDataAccess.Add(newOffer);
+        }
+        public List<Offer> ViewOffers()
+        {
             List<Offer> Offers = new List<Offer>();
-            foreach (string offerID in UserFound.Offers)
+            foreach (string offerID in userFound.offers)
             {
-                Offers.Add(supervisor.Offers.Find(_ => (string.Equals(_.ID, offerID))));
+                Offers.Add(offerDataAccess.FindById(offerID));
             }
             return Offers;
         }
+
+        public List<Offer> ViewAllOffersOtherThanUser()
+        {
+            List<string> ids = userFound.offers;
+            List<Offer> offersToBook = new List<Offer>();
+            if (ids.ToArray().Length == 0)
+                return offers;
+            foreach(Offer offer in offers)
+            {
+                foreach(string id in ids)
+                {
+                    if (!offer.id.Equals(id))
+                    {
+                        offersToBook.Add(offer);
+                    }
+                }
+                
+            }
+            return offersToBook;
+        }
+
     }
 }

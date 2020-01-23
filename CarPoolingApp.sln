@@ -7,9 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp", "CarPooling
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp.Models", "CarPoolingApp.Models\CarPoolingApp.Models.csproj", "{9108120E-A5E6-4F4A-AABC-B0689CFD0BFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Services", "CarPoolingApp.Services\CarPoolingApp.Services.csproj", "{478190C1-6D7F-4808-A5BB-D34FFD868E66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp.Services", "CarPoolingApp.Services\CarPoolingApp.Services.csproj", "{478190C1-6D7F-4808-A5BB-D34FFD868E66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Helpers", "CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj", "{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarPoolingApp.Helpers", "CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj", "{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.DataRepositories", "CarPoolingApp.DataRepositories\CarPoolingApp.DataRepositories.csproj", "{45A85C17-FFED-48CC-8CC6-6FF72C2776C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.Database", "CarPoolingApp.Database\CarPoolingApp.Database.csproj", "{4A2E2A56-765F-40FD-A7DA-1D647DE80C90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarPoolingApp.StringPool", "CarPoolingApp.StringPool\CarPoolingApp.StringPool.csproj", "{9C961BFD-8FD7-4939-8790-ADC813503412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +39,18 @@ Global
 		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACF2B1A0-DE08-4119-BC16-0462A4CB8968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45A85C17-FFED-48CC-8CC6-6FF72C2776C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45A85C17-FFED-48CC-8CC6-6FF72C2776C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45A85C17-FFED-48CC-8CC6-6FF72C2776C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45A85C17-FFED-48CC-8CC6-6FF72C2776C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A2E2A56-765F-40FD-A7DA-1D647DE80C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A2E2A56-765F-40FD-A7DA-1D647DE80C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A2E2A56-765F-40FD-A7DA-1D647DE80C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A2E2A56-765F-40FD-A7DA-1D647DE80C90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C961BFD-8FD7-4939-8790-ADC813503412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C961BFD-8FD7-4939-8790-ADC813503412}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C961BFD-8FD7-4939-8790-ADC813503412}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C961BFD-8FD7-4939-8790-ADC813503412}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
