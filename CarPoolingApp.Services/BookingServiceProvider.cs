@@ -18,23 +18,23 @@ namespace CarPoolingApp.Services
         Repository<Offer> offerDataAccess = new Repository<Offer>();
         public BookingServiceProvider(string username)
         {
-            user = userDataAccess.FindByName(username);
+            user = userDataAccess.FindByProperty("userName", username);
             bookings = bookingDatAccess.GetAllObjects();
         }
         public bool IsBookingPending(string userName)
         {
             foreach(Booking booking in bookings)
             {
-                if(string.Equals(booking.userName, userName) && booking.approvalStatus.Equals(BookingConfirmationType.None))
+                if(string.Equals(booking.UserName, userName) && booking.ApprovalStatus.Equals(BookingConfirmationType.None))
                 {
                     return true;
                 }
             }
             return false;
         }
-        public void MakeBooking(string offerID)
+        public void MakeBooking(string offerId)
         {
-            var offer = offerDataAccess.FindById(offerID);
+            var offer = offerDataAccess.FindByProperty("id", offerId);
             if (offer == null || offer.maxPeople == 0)
             {
                 throw new Exception(ExceptionMessages.InvalidID);
@@ -43,45 +43,45 @@ namespace CarPoolingApp.Services
             {
                 throw new Exception(ExceptionMessages.Outstanding);
             }
-            Booking newBooking = new Booking(offerID, offer.startPoint, offer.endPoint, offer.costPerKm);
+            Booking newBooking = new Booking(offerId, offer.startPoint, offer.EndPoint, offer.costPerKm);
             offer.maxPeople--;
-            user.bookingIDs.Add(newBooking.id);
+            user.bookingIDs.Add(newBooking.Id);
             bookingDatAccess.Add(newBooking);
-            userDataAccess.UpdateByName(user);
+            userDataAccess.UpdateByProps("userName", user);
         }
         public List<Booking> ViewBookings()
         {
             foreach (string bookingID in user.bookingIDs)
             {
-                bookings.Add(bookingDatAccess.FindById(bookingID));
+                bookings.Add(bookingDatAccess.FindByProperty("id", bookingID));
             }
             return bookings;
         }
         public void ConfirmBooking(int response, string bookingID)
         {
-            var bookingFound = bookingDatAccess.FindById(bookingID);
+            var bookingFound = bookingDatAccess.FindByProperty("id", bookingID);
             if(bookingFound == null)
             {
                 throw new Exception(ExceptionMessages.InvalidID);
             }
             if(response == 1)
             {
-                bookingFound.approvalStatus = BookingConfirmationType.Accept;
+                bookingFound.ApprovalStatus = BookingConfirmationType.Accept;
             }
             else
             {
-                bookingFound.approvalStatus = BookingConfirmationType.Reject;
+                bookingFound.ApprovalStatus = BookingConfirmationType.Reject;
             }
-            bookingDatAccess.UpdateById(bookingFound);
+            bookingDatAccess.UpdateByProps("id", bookingFound);
         }
         public List<Booking> UsersBookingsGenerator()
         {
             List<Booking> bookingsToReturn = new List<Booking>();
             List < Booking > bookings = bookingDatAccess.GetAllObjects();
-            foreach (string offerID in user.offers)
+            foreach (string OfferId in user.offers)
             {
-                var Booking = bookings.Find(_ => (string.Equals(_.offerID, offerID)));
-                if (Booking != null && Booking.approvalStatus.Equals(BookingConfirmationType.None))
+                var Booking = bookings.Find(_ => (string.Equals(_.OfferId, OfferId)));
+                if (Booking != null && Booking.ApprovalStatus.Equals(BookingConfirmationType.None))
                 {
                     bookingsToReturn.Add(Booking);
                 }
@@ -93,8 +93,8 @@ namespace CarPoolingApp.Services
             List<Booking> completed = new List<Booking>();
             foreach(string ID in user.bookingIDs)
             {
-                var booking = bookingDatAccess.FindById(ID);
-                if(booking!=null && booking.approvalStatus.Equals(BookingConfirmationType.Accept))
+                var booking = bookingDatAccess.FindByProperty("id", ID);
+                if(booking!=null && booking.ApprovalStatus.Equals(BookingConfirmationType.Accept))
                 {
                     completed.Add(booking);
                 }
@@ -106,8 +106,8 @@ namespace CarPoolingApp.Services
             List<Booking> debtedBookings = new List<Booking>();
             foreach(string bookingID in user.bookingIDs)
             {
-                var Booking = bookingDatAccess.FindById(bookingID);
-                if (Booking.approvalStatus.Equals(BookingConfirmationType.Accept) && Booking.isPaid.Equals(false))
+                var Booking = bookingDatAccess.FindByProperty("id", bookingID);
+                if (Booking.ApprovalStatus.Equals(BookingConfirmationType.Accept) && Booking.IsPaid.Equals(false))
                 {
                     debtedBookings.Add(Booking);
                 }
@@ -121,11 +121,11 @@ namespace CarPoolingApp.Services
 
             foreach(Booking booking in bookings)
             {
-                if (booking.approvalStatus.Equals(BookingConfirmationType.None))
+                if (booking.ApprovalStatus.Equals(BookingConfirmationType.None))
                 {
                     foreach(string id in ids)
                     {
-                        if (booking.offerID.Equals(id))
+                        if (booking.OfferId.Equals(id))
                         {
                             pendingBookings.Add(booking);
                             break;

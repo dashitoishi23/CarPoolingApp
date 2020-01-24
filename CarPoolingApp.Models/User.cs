@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using CarPoolingApp.Helpers;
 using System.Text;
+using CarPoolingApp.DataRepositories;
 
-namespace CarPoolingApp.DataRepositories
-{
-    public partial class User:IEntity
+namespace CarPoolingApp.Models { 
+    public partial class User:Entity
     {
         public string password { get; set; }
         public int debt { get { return 0; } set { } }

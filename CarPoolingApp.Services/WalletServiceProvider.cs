@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CarPoolingApp.DataRepositories;
 using CarPoolingApp.Helpers;
+using CarPoolingApp.Models;
 
 namespace CarPoolingApp.Services
 {
@@ -14,18 +15,18 @@ namespace CarPoolingApp.Services
         Repository<Wallet> walletDataAccess = new Repository<Wallet>();
         public WalletServiceProvider(string userName)
         {
-            this.userFound = userDataAccess.FindByName(userName);
-            this.wallet = walletDataAccess.FindById(userFound.walletID);
+            this.userFound = userDataAccess.FindByProperty("userName", userName);
+            this.wallet = walletDataAccess.FindByProperty("id", userFound.walletID);
         }
         public decimal TopUpWallet(decimal money)
         {
-            this.wallet.funds += money;
-            walletDataAccess.UpdateById(this.wallet);
-            return this.wallet.funds;
+            this.wallet.Funds += money;
+            walletDataAccess.UpdateByProps("id", this.wallet);
+            return this.wallet.Funds;
         }
         public bool IsFundSufficient(decimal toPay)
         {
-            return (toPay >= this.wallet.funds);
+            return (toPay >= this.wallet.Funds);
         }
         public static Wallet GetNewWallet()
         {
@@ -33,9 +34,9 @@ namespace CarPoolingApp.Services
         }
         public decimal DeductWalletFund(decimal toPay)
         {
-            this.wallet.funds -= toPay;
-            walletDataAccess.UpdateById(this.wallet);
-            return this.wallet.funds;
+            this.wallet.Funds -= toPay;
+            walletDataAccess.UpdateByProps("id", this.wallet);
+            return this.wallet.Funds;
         }
     }
 }

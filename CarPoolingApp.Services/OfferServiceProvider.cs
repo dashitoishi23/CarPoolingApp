@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using CarPoolingApp.DataRepositories;
+using CarPoolingApp.Models;
 
 namespace CarPoolingApp.Services
 {
@@ -14,24 +15,24 @@ namespace CarPoolingApp.Services
         List<Offer> offers;
         public OfferServiceProvider(string userName)
         {
-            userFound = userDataAccess.FindByName(userName);
+            userFound = userDataAccess.FindByProperty("userName", userName);
             offers = offerDataAccess.GetAllObjects();
         }
-        public void CreateOffer(string startPoint, string viaPointsList, string endPoint, int cost, int maxPeople, string carModel)
+        public void CreateOffer(string startPoint, string viaPointsList, string EndPoint, int cost, int maxPeople, string carModel)
         {
             string[] points = viaPointsList.Split(' ');
             List<string> viaPoints = points.ToList();
-            Offer newOffer = new Offer(cost, maxPeople, startPoint, viaPoints, endPoint, carModel, userFound.id);
-            userFound.offers.Add(newOffer.id);
-            userDataAccess.UpdateByName(userFound);
+            Offer newOffer = new Offer(cost, maxPeople, startPoint, viaPoints, EndPoint, carModel, userFound.Id);
+            userFound.offers.Add(newOffer.Id);
+            userDataAccess.UpdateByProps("userName", userFound);
             offerDataAccess.Add(newOffer);
         }
         public List<Offer> ViewOffers()
         {
             List<Offer> Offers = new List<Offer>();
-            foreach (string offerID in userFound.offers)
+            foreach (string OfferId in userFound.offers)
             {
-                Offers.Add(offerDataAccess.FindById(offerID));
+                Offers.Add(offerDataAccess.FindByProperty("id", OfferId));
             }
             return Offers;
         }
@@ -46,7 +47,7 @@ namespace CarPoolingApp.Services
             {
                 foreach(string id in ids)
                 {
-                    if (!offer.id.Equals(id))
+                    if (!offer.Id.Equals(id))
                     {
                         offersToBook.Add(offer);
                     }

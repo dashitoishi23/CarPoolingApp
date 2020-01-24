@@ -4,13 +4,15 @@ using CarPoolingApp.DataRepositories;
 using CarPoolingApp.Services;
 using System.Linq;
 using System.Reflection;
+using CarPoolingApp.Models;
+using CarPoolingApp.Helpers;
 
 namespace CarPoolingApp
 {
     public class Program
     {
-        // use string.Empty for empty strings, since strings are immutable u could avoid creating multiple empty strings that eventually loose their reference and also so that it is understood we are keeping empty value intentionally.
-        static string loggedInUser = "";
+        
+        static string loggedInUser = string.Empty;
         static User sessionUser;
         static void Main(string[] args)
         {
@@ -144,7 +146,6 @@ namespace CarPoolingApp
             int userInput = Convert.ToInt32(Console.ReadLine());
             switch (userInput)
             {
-                // Use suffix(as flows for example) to these methods to know that these are flows not just actions.
                 case 1:
                     CreateOfferFlow();
                     break;
@@ -205,13 +206,13 @@ namespace CarPoolingApp
                 }
                 Console.WriteLine("Decide an ending point");
                  
-                string endPoint = Console.ReadLine();
+                string EndPoint = Console.ReadLine();
                 Console.WriteLine("Enter max number of people");
                  
                 int maxPeople = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Enter the car you are using");
                 string carModel = Console.ReadLine();
-                offerService.CreateOffer(startPoint, viaPoints, endPoint, costPerKm, maxPeople, carModel);
+                offerService.CreateOffer(startPoint, viaPoints, EndPoint, costPerKm, maxPeople, carModel);
             }
 
         }
@@ -225,7 +226,7 @@ namespace CarPoolingApp
 
                 foreach(var offer in availableOffers)
                 {
-                    DisplayAttributes<Offer>(offer);
+                    AttributeDisplayHelper.DisplayAttributes<Offer>(offer);
                 }
                 Console.WriteLine("Enter offer ID");
                 string OfferID = Console.ReadLine();
@@ -250,7 +251,7 @@ namespace CarPoolingApp
             List<Offer> OffersToDisplay = offerService.ViewOffers();
             foreach (Offer display in OffersToDisplay)
             {
-                DisplayAttributes<Offer>(display);
+                AttributeDisplayHelper.DisplayAttributes<Offer>(display);
             }
 
         }
@@ -260,7 +261,7 @@ namespace CarPoolingApp
             List<Booking> bookingToDisplay = bookingService.ViewBookings();
             foreach(Booking display in bookingToDisplay)
             {
-                DisplayAttributes<Booking>(display);
+                AttributeDisplayHelper.DisplayAttributes<Booking>(display);
             }
 
         }
@@ -270,7 +271,7 @@ namespace CarPoolingApp
             List<Booking> bookingsMade = bookingService.UsersBookingsGenerator();
             foreach (Booking display in bookingsMade)
             {
-                DisplayAttributes<Booking>(display);
+                AttributeDisplayHelper.DisplayAttributes<Booking>(display);
             }
             Console.WriteLine("Enter Booking ID");
             string bookingID = Console.ReadLine();
@@ -294,7 +295,7 @@ namespace CarPoolingApp
             List<Booking> completed = bookingService.ViewCompletedRides();
             foreach (Booking display in completed)
             {
-                DisplayAttributes<Booking>(display);
+                AttributeDisplayHelper.DisplayAttributes<Booking>(display);
             }
 
         }
@@ -318,13 +319,13 @@ namespace CarPoolingApp
             }
             else
             {
-                List<Booking> SortedBookings = Completed.OrderByDescending(o => o.dateCreated).ToList();
+                List<Booking> SortedBookings = Completed.OrderByDescending(o => o.DateCreated).ToList();
                 Repository<Booking> bookingDataAccess = new Repository<Booking>();
-                Console.WriteLine("Your last ride from " + SortedBookings.ElementAt(0).startPoint + " to " + SortedBookings.ElementAt(0).endPoint + " amounts to Rs. " + SortedBookings.ElementAt(0).price);
-                if(walletService.IsFundSufficient(SortedBookings.ElementAt(0).price)){
-                    decimal LeftMoney = walletService.DeductWalletFund(SortedBookings.ElementAt(0).price);
+                Console.WriteLine("Your last ride from " + SortedBookings.ElementAt(0).StartPoint + " to " + SortedBookings.ElementAt(0).EndPoint + " amounts to Rs. " + SortedBookings.ElementAt(0).Price);
+                if(walletService.IsFundSufficient(SortedBookings.ElementAt(0).Price)){
+                    decimal LeftMoney = walletService.DeductWalletFund(SortedBookings.ElementAt(0).Price);
                     bookingDataAccess.Remove(SortedBookings.ElementAt(0));
-                    SortedBookings.ElementAt(0).isPaid = true;
+                    SortedBookings.ElementAt(0).IsPaid = true;
                     bookingDataAccess.Add(SortedBookings.ElementAt(0));
                     Console.WriteLine("Money left is Rs. " + LeftMoney);
                 }
@@ -342,26 +343,10 @@ namespace CarPoolingApp
             List<Booking> DebtedBookings = bookingService.ViewDebtedBookings();
             foreach(Booking booking in DebtedBookings)
             {
-                // Why was this not done using the DisplayAttributesMethod?
-                Console.WriteLine("BookingID" + booking.id);
-                Console.WriteLine("From" + booking.startPoint);
-                Console.WriteLine("To" + booking.endPoint);
-                Console.WriteLine("To Pay: Rs. " + booking.price);
+                AttributeDisplayHelper.DisplayAttributes<Booking>(booking);
             }
         }
 
-        //Attributes refer to the properties you can add for properties. This should rather be DisplayProperties or DisplayObject.
-        //What is the puprpose of Using generics in this?
-        //This should be in a helper class.
-        static void DisplayAttributes<T>(T objectType)
-        {
-            Type type = objectType.GetType();
-            PropertyInfo[] props = type.GetProperties();
-            foreach(var prop in props)
-            {
-                Console.WriteLine(prop.Name + " " + prop.GetValue(objectType));
-            }
-        }
 
         //Missing method for dynamically reading input for properties
     }

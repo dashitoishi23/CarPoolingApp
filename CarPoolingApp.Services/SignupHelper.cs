@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using CarPoolingApp.DataRepositories;
 using Newtonsoft.Json;
 using CarPoolingApp.StringPool;
+using CarPoolingApp.Models;
 
 namespace CarPoolingApp.Services
 {
@@ -16,7 +17,7 @@ namespace CarPoolingApp.Services
         {
             userDataAccess = new Repository<User>();
             walletDataAccess = new Repository<Wallet>();
-            userFound = userDataAccess.FindByName(userName);
+            userFound = userDataAccess.FindByProperty("userName", userName);
         }
         public User SignupService(string userName, string password, string answer)
         {
@@ -30,13 +31,13 @@ namespace CarPoolingApp.Services
                 Wallet newWallet = WalletServiceProvider.GetNewWallet();
                 newUser = new User
                 {
-                    userName = userName,
+                    UserName = userName,
                     password = password,
                     securityAnswer = answer
                 };
-                newUser.walletID = newWallet.id;
+                newUser.walletID = newWallet.Id;
                 userDataAccess.Add(newUser);
-                newWallet.userID = newUser.id;
+                newWallet.UserID = newUser.Id;
                 walletDataAccess.Add(newWallet);
                 break;
             }

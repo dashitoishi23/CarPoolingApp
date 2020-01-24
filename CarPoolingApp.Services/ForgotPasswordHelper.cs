@@ -1,5 +1,6 @@
 ﻿using System;
 using CarPoolingApp.DataRepositories;
+using CarPoolingApp.Models;
 using CarPoolingApp.StringPool;
 
 namespace CarPoolingApp.Services
@@ -9,7 +10,7 @@ namespace CarPoolingApp.Services
         public void ForgotPasswordService(string userName, string answer)
         {
             Repository<User> userDataAccess = new Repository<User>();
-            var userFound = userDataAccess.FindByName(userName);
+            var userFound = userDataAccess.FindByProperty("userName", userName);
             if(userFound == null)
             {
                 throw new Exception(ExceptionMessages.VoidExistance);
@@ -18,7 +19,7 @@ namespace CarPoolingApp.Services
             {
                 string password = Console.ReadLine();
                 userFound.password = password;
-                userDataAccess.UpdateByName(userFound);
+                userDataAccess.UpdateByProps("userName", userFound);
             }
         }
     }

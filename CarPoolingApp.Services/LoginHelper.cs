@@ -5,6 +5,7 @@ using CarPoolingApp.Helpers;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using CarPoolingApp.StringPool;
+using CarPoolingApp.Models;
 
 namespace CarPoolingApp.Services
 {
@@ -13,7 +14,7 @@ namespace CarPoolingApp.Services
         public User LoginValidator(string username, string password)
         {
             Repository<User> userDataAccess = new Repository<User>();
-            var userFound = userDataAccess.FindByName(username);
+            var userFound = userDataAccess.FindByProperty("userName", username);
             if (userFound == null)
             {
                 throw new Exception(ExceptionMessages.VoidExistance);

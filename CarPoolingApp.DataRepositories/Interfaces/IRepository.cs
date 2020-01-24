@@ -4,14 +4,11 @@ using System.Text;
 
 namespace CarPoolingApp.DataRepositories
 {
-    public interface IRepository<T> where T:IEntity
+    public interface IRepository<T> where T:Entity
     {
-        // Seperate interfaces from classes.
-        T FindById(string id);
-        T FindByName(string name);
+        T FindByProperty(string propName, string value);
         void Add(T entity);
-        void UpdateById(T entity);
-        void UpdateByName(T entity);
+        void UpdateByProps(string propName, T entity);
         void Remove(T entity);
 
         //Use IEnumerable instead of list in interfaces. Its upto the class that implements to what object to be returned. If Ienumerable is used this can be more generalised.

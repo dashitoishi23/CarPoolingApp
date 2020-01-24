@@ -13,7 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarPoolingApp.DataRepositories\CarPoolingApp.DataRepositories.csproj" />
     <ProjectReference Include="..\CarPoolingApp.Helpers\CarPoolingApp.Helpers.csproj" />
+    <ProjectReference Include="..\CarPoolingApp.StringPool\CarPoolingApp.StringPool.csproj" />
   </ItemGroup>
 
 </Project>
