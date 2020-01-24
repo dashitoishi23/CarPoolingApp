@@ -70,7 +70,7 @@ namespace CarPoolingApp
                         break;
                     case 2:
                         Console.WriteLine("Enter a username");
-                        userName = Console.ReadLine();
+                        userName = Console.ReadLine(); //taking user input
                         Console.WriteLine("Enter a password");
                         password = Console.ReadLine();
                         Console.WriteLine("What was the name of your first school?");
