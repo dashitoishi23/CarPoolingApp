@@ -7,6 +7,7 @@ namespace CarPoolingApp.DataRepositories
 {
     public class Offer:IEntity
     {
+        // Wrong case
         public int costPerKm { get; set; }
         public int maxPeople { get; set; }
         public string startPoint { get; set; }

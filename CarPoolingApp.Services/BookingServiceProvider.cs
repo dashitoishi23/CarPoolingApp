@@ -110,6 +110,7 @@ namespace CarPoolingApp.Services
         {
             List<Booking> pendingBookings = new List<Booking>();
             List<string> ids = user.offers;
+
             foreach(Booking booking in bookings)
             {
                 if (booking.approvalStatus.Equals(BookingConfirmationType.None))
