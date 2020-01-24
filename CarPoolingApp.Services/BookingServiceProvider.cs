@@ -45,9 +45,12 @@ namespace CarPoolingApp.Services
             }
             Booking newBooking = new Booking(offerId, offer.startPoint, offer.EndPoint, offer.costPerKm);
             offer.maxPeople--;
-            user.bookingIDs.Add(newBooking.Id);
+            user.BookingIDs.Add(newBooking.Id);
             bookingDatAccess.Add(newBooking);
-            userDataAccess.UpdateByProps("userName", user);
+            userDataAccess.UpdateByProps((newObj) =>
+            {
+                newObj.BookingIDs = user.BookingIDs;
+            }, user.Id);
         }
         public List<Booking> ViewBookings()
         {
@@ -66,13 +69,16 @@ namespace CarPoolingApp.Services
             }
             if(response == 1)
             {
-                bookingFound.ApprovalStatus = BookingConfirmationType.Accept;
+                bookingFound.SetApprovalStatus(BookingConfirmationType.Accept);
             }
             else
             {
-                bookingFound.ApprovalStatus = BookingConfirmationType.Reject;
+                bookingFound.SetApprovalStatus(BookingConfirmationType.Reject);
             }
-            bookingDatAccess.UpdateByProps("id", bookingFound);
+            bookingDatAccess.UpdateByProps((newObj) =>
+            {
+                newObj.ApprovalStatus = bookingFound.ApprovalStatus;
+            }, bookingFound.Id);
         }
         public List<Booking> UsersBookingsGenerator()
         {

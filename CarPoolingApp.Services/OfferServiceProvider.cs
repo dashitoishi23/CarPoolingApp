@@ -24,7 +24,10 @@ namespace CarPoolingApp.Services
             List<string> viaPoints = points.ToList();
             Offer newOffer = new Offer(cost, maxPeople, startPoint, viaPoints, EndPoint, carModel, userFound.Id);
             userFound.offers.Add(newOffer.Id);
-            userDataAccess.UpdateByProps("userName", userFound);
+            userDataAccess.UpdateByProps((exitingObj,NewOnject) => {
+                exitingObj.offers = NewOnject.offers;
+                return exitingObj;
+            }, userFound);
             offerDataAccess.Add(newOffer);
         }
         public List<Offer> ViewOffers()

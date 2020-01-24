@@ -21,7 +21,9 @@ namespace CarPoolingApp.Services
         public decimal TopUpWallet(decimal money)
         {
             this.wallet.Funds += money;
-            walletDataAccess.UpdateByProps("id", this.wallet);
+            walletDataAccess.UpdateByProps((exitingObj) => {
+                exitingObj.Funds = wallet.Funds;
+            }, this.wallet.Id);
             return this.wallet.Funds;
         }
         public bool IsFundSufficient(decimal toPay)
@@ -35,7 +37,10 @@ namespace CarPoolingApp.Services
         public decimal DeductWalletFund(decimal toPay)
         {
             this.wallet.Funds -= toPay;
-            walletDataAccess.UpdateByProps("id", this.wallet);
+            walletDataAccess.UpdateByProps((newObj) =>
+            {
+                newObj.Funds = this.wallet.Funds;
+            }, this.wallet.id);
             return this.wallet.Funds;
         }
     }

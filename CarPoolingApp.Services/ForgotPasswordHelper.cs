@@ -15,11 +15,14 @@ namespace CarPoolingApp.Services
             {
                 throw new Exception(ExceptionMessages.VoidExistance);
             }
-            if (userFound.securityAnswer.Equals(answer))
+            if (userFound.SecurityAnswer.Equals(answer))
             {
                 string password = Console.ReadLine();
-                userFound.password = password;
-                userDataAccess.UpdateByProps("userName", userFound);
+                userFound.Password = password;
+                userDataAccess.UpdateByProps((newObj) =>
+                {
+                    newObj.Password = password;
+                }, userFound.Id);
             }
         }
     }

@@ -36,6 +36,10 @@ namespace CarPoolingApp.Models {
             this.EndPoint = endPoint;
             this.Price = this.Distance * costPerKm;
         }
+        public void SetApprovalStatus(BookingConfirmationType type)
+        {
+            this.ApprovalStatus = type;
+        }
 
 
         }

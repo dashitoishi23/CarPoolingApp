@@ -1,13 +1,2 @@
 [
-  {
-    "costPerKm": 4,
-    "maxPeople": 4,
-    "startPoint": "fd",
-    "viaPoints": [ "d" ],
-    "EndPoint": "d",
-    "carModel": "suv",
-    "userID": "91e56aae-43ff-4086-b836-e7a59efbf7d4",
-    "id": "18ff1e6b-93ae-4457-a89f-afe7bedac6df",
-    "userName": null
-  }
 ]

@@ -1,22 +1,12 @@
 [
   {
-    "offers": [ "18ff1e6b-93ae-4457-a89f-afe7bedac6df" ],
+    "offers": [],
     "bookingIDs": [],
     "password": "Password",
     "debt": 0,
     "securityAnswer": "DAV",
-    "walletID": "3f7f0780-1da1-4644-8d42-78f0a0e7fd9a",
-    "id": "91e56aae-43ff-4086-b836-e7a59efbf7d4",
-    "userName": "Hitoishi"
-  },
-  {
-    "offers": [],
-    "bookingIDs": [ "e322faed-16b6-4742-8b68-ec61f05364ce" ],
-    "password": "Pass",
-    "debt": 0,
-    "securityAnswer": "DAV",
-    "walletID": "411e8ba1-091c-4070-bf9b-09ae9d120b5b",
-    "id": "1ba1fe7b-8453-4514-bfa6-722ce8d6acfb",
-    "userName": "Hits"
+    "walletID": "ce9ced91-7262-4223-8771-8db49592c44d",
+    "Id": "50b10746-3e1b-4b20-97ce-028f14303d00",
+    "UserName": "Hitoishi"
   }
 ]

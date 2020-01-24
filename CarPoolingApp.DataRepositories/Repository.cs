@@ -15,9 +15,9 @@ namespace CarPoolingApp.DataRepositories
         // What if you want to store objects instead of arrays in the json? That case should also be handled.
 
         string filePath = "../../../../CarPoolingApp.Database/" + FilePathsMapper.fileMapper[typeof(T).Name];
-        
 
-       List<T> objects
+
+        List<T> objects
         {
             get
             {
@@ -42,17 +42,18 @@ namespace CarPoolingApp.DataRepositories
         }
         public T FindByProperty(string propName, string value)
         {
-            Type type = objects.GetType();
+            Type type = objects.ElementAt(0).GetType();
             PropertyInfo[] props = type.GetProperties();
             var prop = props.ToList().Find(_ => (string.Equals(_.Name, propName)));
-            return objects.Find(_ => (string.Equals(prop.GetValue(objects), value)));
+            return objects.Find(_ => (string.Equals(prop.GetValue(objects.ElementAt(0)), value)));
         }
-        public void UpdateByProps(string propName, T entity)
+        public void UpdateByProps(Action<T> updateMethod, string id)
         {
-            Type type = objects.GetType();
-            PropertyInfo[] props = type.GetProperties();
-            var prop = props.ToList().Find(_ => (string.Equals(_.Name, propName)));
-            objects[objects.FindIndex(_=>(string.Equals(prop.GetValue(objects), entity.Id)))] = entity;
+            var oldObj = this.FindByProperty("Id", id);
+            updateMethod(oldObj);
+
+
+            // update json. 
         }
         public void Remove(T entity)
         {
