@@ -21,6 +21,8 @@ namespace CarPoolingApp.DataRepositories
         public string offerID { get; set; }
         public string startPoint { get; set; }
         public string endPoint { get; set;}
+
+        //Why does is this still a constant value.
         public int distance { get { return 20; } }
         public int price { get; set; }
         public bool isPaid { get { return false; } set { this.isPaid = value; } }

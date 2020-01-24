@@ -9,6 +9,7 @@ namespace CarPoolingApp
 {
     public class Program
     {
+        // use string.Empty for empty strings, since strings are immutable u could avoid creating multiple empty strings that eventually loose their reference and also so that it is understood we are keeping empty value intentionally.
         static string loggedInUser = "";
         static User sessionUser;
         static void Main(string[] args)
@@ -341,12 +342,17 @@ namespace CarPoolingApp
             List<Booking> DebtedBookings = bookingService.ViewDebtedBookings();
             foreach(Booking booking in DebtedBookings)
             {
+                // Why was this not done using the DisplayAttributesMethod?
                 Console.WriteLine("BookingID" + booking.id);
                 Console.WriteLine("From" + booking.startPoint);
                 Console.WriteLine("To" + booking.endPoint);
                 Console.WriteLine("To Pay: Rs. " + booking.price);
             }
         }
+
+        //Attributes refer to the properties you can add for properties. This should rather be DisplayProperties or DisplayObject.
+        //What is the puprpose of Using generics in this?
+        //This should be in a helper class.
         static void DisplayAttributes<T>(T objectType)
         {
             Type type = objectType.GetType();
@@ -356,5 +362,7 @@ namespace CarPoolingApp
                 Console.WriteLine(prop.Name + " " + prop.GetValue(objectType));
             }
         }
+
+        //Missing method for dynamically reading input for properties
     }
 }
