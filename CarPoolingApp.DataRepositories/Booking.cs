@@ -23,7 +23,7 @@ namespace CarPoolingApp.DataRepositories
         public string endPoint { get; set;}
         public int distance { get { return 20; } }
         public int price { get; set; }
-        public bool isPaid { get { return false; } set { } }
+        public bool isPaid { get { return false; } set { this.isPaid = value; } }
 
         public Booking(string offerID, string startPoint, string endPoint, int costPerKm)
         {

@@ -64,15 +64,23 @@ namespace CarPoolingApp.Services
             {
                 throw new Exception(ExceptionMessages.InvalidID);
             }
-            bookingFound.approvalStatus = response == 1 ? BookingConfirmationType.Accept : BookingConfirmationType.Reject;
+            if(response == 1)
+            {
+                bookingFound.approvalStatus = BookingConfirmationType.Accept;
+            }
+            else
+            {
+                bookingFound.approvalStatus = BookingConfirmationType.Reject;
+            }
             bookingDatAccess.UpdateById(bookingFound);
         }
         public List<Booking> UsersBookingsGenerator()
         {
             List<Booking> bookingsToReturn = new List<Booking>();
-            foreach(string offerID in user.offers)
+            List < Booking > bookings = bookingDatAccess.GetAllObjects();
+            foreach (string offerID in user.offers)
             {
-                var Booking = bookingDatAccess.FindById(offerID);
+                var Booking = bookings.Find(_ => (string.Equals(_.offerID, offerID)));
                 if (Booking != null && Booking.approvalStatus.Equals(BookingConfirmationType.None))
                 {
                     bookingsToReturn.Add(Booking);

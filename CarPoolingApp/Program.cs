@@ -273,22 +273,17 @@ namespace CarPoolingApp
             }
             Console.WriteLine("Enter Booking ID");
             string bookingID = Console.ReadLine();
-            Console.WriteLine("Enter a response (1 to accept and 2 to reject");
+            Console.WriteLine("Enter a response (1 to accept and 2 to reject)");
             int response = Convert.ToInt32(Console.ReadLine());
-            if (response != 1 || response != 2)
+            response = response % 2;
+            response = response == 0 ? 2 : response;
+            try
             {
-                Console.WriteLine("Invalid response");
+                bookingService.ConfirmBooking(response,bookingID);
             }
-            else
+            catch(Exception e)
             {
-                try
-                {
-                    bookingService.ConfirmBooking(response,bookingID);
-                }
-                catch(Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                Console.WriteLine(e);
             }
 
         }
