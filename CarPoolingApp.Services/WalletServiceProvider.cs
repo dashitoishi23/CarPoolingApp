@@ -16,7 +16,7 @@ namespace CarPoolingApp.Services
         public WalletServiceProvider(string userName)
         {
             this.userFound = userDataAccess.FindByProperty("userName", userName);
-            this.wallet = walletDataAccess.FindByProperty("id", userFound.walletID);
+            this.wallet = walletDataAccess.FindByProperty("id", userFound.WalletID);
         }
         public decimal TopUpWallet(decimal money)
         {
@@ -40,7 +40,7 @@ namespace CarPoolingApp.Services
             walletDataAccess.UpdateByProps((newObj) =>
             {
                 newObj.Funds = this.wallet.Funds;
-            }, this.wallet.id);
+            }, this.wallet.Id);
             return this.wallet.Funds;
         }
     }

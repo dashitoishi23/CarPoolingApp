@@ -50,10 +50,9 @@ namespace CarPoolingApp.DataRepositories
         public void UpdateByProps(Action<T> updateMethod, string id)
         {
             var oldObj = this.FindByProperty("Id", id);
+            int index = objects.FindIndex(_=>string.Equals(_.Id, id));
             updateMethod(oldObj);
-
-
-            // update json. 
+            objects[index] = oldObj;
         }
         public void Remove(T entity)
         {

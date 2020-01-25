@@ -117,13 +117,13 @@ namespace CarPoolingApp
             Console.WriteLine("1. Create an offer");
             Console.WriteLine("2. Make a booking");
             Console.WriteLine("3. View all offers");
-            if(sessionUser.bookingIDs.ToArray().Length == 0)
+            if(sessionUser.BookingIDs.ToArray().Length == 0)
             {
                 Console.WriteLine("4. View all bookings (No bookings made)");
             }
             else
             {
-                int numberBookings = sessionUser.bookingIDs.ToArray().Length;
+                int numberBookings = sessionUser.BookingIDs.ToArray().Length;
                 Console.WriteLine("4. View all "+numberBookings+" bookings ");
             }
             BookingServiceProvider bookingService = new BookingServiceProvider(loggedInUser);

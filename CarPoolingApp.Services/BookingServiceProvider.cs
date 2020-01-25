@@ -18,7 +18,7 @@ namespace CarPoolingApp.Services
         Repository<Offer> offerDataAccess = new Repository<Offer>();
         public BookingServiceProvider(string username)
         {
-            user = userDataAccess.FindByProperty("userName", username);
+            user = userDataAccess.FindByProperty("UserName", username);
             bookings = bookingDatAccess.GetAllObjects();
         }
         public bool IsBookingPending(string userName)
@@ -34,12 +34,12 @@ namespace CarPoolingApp.Services
         }
         public void MakeBooking(string offerId)
         {
-            var offer = offerDataAccess.FindByProperty("id", offerId);
+            var offer = offerDataAccess.FindByProperty("Id", offerId);
             if (offer == null || offer.maxPeople == 0)
             {
                 throw new Exception(ExceptionMessages.InvalidID);
             }
-            if (user.debt != 0)
+            if (user.Debt != 0)
             {
                 throw new Exception(ExceptionMessages.Outstanding);
             }
@@ -54,15 +54,15 @@ namespace CarPoolingApp.Services
         }
         public List<Booking> ViewBookings()
         {
-            foreach (string bookingID in user.bookingIDs)
+            foreach (string bookingID in user.BookingIDs)
             {
-                bookings.Add(bookingDatAccess.FindByProperty("id", bookingID));
+                bookings.Add(bookingDatAccess.FindByProperty("Id", bookingID));
             }
             return bookings;
         }
         public void ConfirmBooking(int response, string bookingID)
         {
-            var bookingFound = bookingDatAccess.FindByProperty("id", bookingID);
+            var bookingFound = bookingDatAccess.FindByProperty("Id", bookingID);
             if(bookingFound == null)
             {
                 throw new Exception(ExceptionMessages.InvalidID);
@@ -84,7 +84,7 @@ namespace CarPoolingApp.Services
         {
             List<Booking> bookingsToReturn = new List<Booking>();
             List < Booking > bookings = bookingDatAccess.GetAllObjects();
-            foreach (string OfferId in user.offers)
+            foreach (string OfferId in user.Offers)
             {
                 var Booking = bookings.Find(_ => (string.Equals(_.OfferId, OfferId)));
                 if (Booking != null && Booking.ApprovalStatus.Equals(BookingConfirmationType.None))
@@ -97,7 +97,7 @@ namespace CarPoolingApp.Services
         public List<Booking> ViewCompletedRides()
         {
             List<Booking> completed = new List<Booking>();
-            foreach(string ID in user.bookingIDs)
+            foreach(string ID in user.BookingIDs)
             {
                 var booking = bookingDatAccess.FindByProperty("id", ID);
                 if(booking!=null && booking.ApprovalStatus.Equals(BookingConfirmationType.Accept))
@@ -110,7 +110,7 @@ namespace CarPoolingApp.Services
         public List<Booking> ViewDebtedBookings()
         {
             List<Booking> debtedBookings = new List<Booking>();
-            foreach(string bookingID in user.bookingIDs)
+            foreach(string bookingID in user.BookingIDs)
             {
                 var Booking = bookingDatAccess.FindByProperty("id", bookingID);
                 if (Booking.ApprovalStatus.Equals(BookingConfirmationType.Accept) && Booking.IsPaid.Equals(false))
@@ -123,7 +123,7 @@ namespace CarPoolingApp.Services
         public List<Booking> GetPendingBookings()
         {
             List<Booking> pendingBookings = new List<Booking>();
-            List<string> ids = user.offers;
+            List<string> ids = user.Offers;
 
             foreach(Booking booking in bookings)
             {

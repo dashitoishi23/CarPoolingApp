@@ -23,17 +23,16 @@ namespace CarPoolingApp.Services
             string[] points = viaPointsList.Split(' ');
             List<string> viaPoints = points.ToList();
             Offer newOffer = new Offer(cost, maxPeople, startPoint, viaPoints, EndPoint, carModel, userFound.Id);
-            userFound.offers.Add(newOffer.Id);
-            userDataAccess.UpdateByProps((exitingObj,NewOnject) => {
-                exitingObj.offers = NewOnject.offers;
-                return exitingObj;
-            }, userFound);
+            userFound.Offers.Add(newOffer.Id);
+            userDataAccess.UpdateByProps((exitingObj) => {
+                exitingObj.Offers = userFound.Offers;
+            }, userFound.Id);
             offerDataAccess.Add(newOffer);
         }
         public List<Offer> ViewOffers()
         {
             List<Offer> Offers = new List<Offer>();
-            foreach (string OfferId in userFound.offers)
+            foreach (string OfferId in userFound.Offers)
             {
                 Offers.Add(offerDataAccess.FindByProperty("id", OfferId));
             }
@@ -42,7 +41,7 @@ namespace CarPoolingApp.Services
 
         public List<Offer> ViewAllOffersOtherThanUser()
         {
-            List<string> ids = userFound.offers;
+            List<string> ids = userFound.Offers;
             List<Offer> offersToBook = new List<Offer>();
             if (ids.ToArray().Length == 0)
                 return offers;

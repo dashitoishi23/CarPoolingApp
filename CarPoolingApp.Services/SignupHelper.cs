@@ -17,7 +17,7 @@ namespace CarPoolingApp.Services
         {
             userDataAccess = new Repository<User>();
             walletDataAccess = new Repository<Wallet>();
-            userFound = userDataAccess.FindByProperty("userName", userName);
+            userFound = userDataAccess.FindByProperty("UserName", userName);
         }
         public User SignupService(string userName, string password, string answer)
         {
@@ -32,10 +32,10 @@ namespace CarPoolingApp.Services
                 newUser = new User
                 {
                     UserName = userName,
-                    password = password,
-                    securityAnswer = answer
+                    Password = password,
+                    SecurityAnswer = answer
                 };
-                newUser.walletID = newWallet.Id;
+                newUser.WalletID = newWallet.Id;
                 userDataAccess.Add(newUser);
                 newWallet.UserID = newUser.Id;
                 walletDataAccess.Add(newWallet);
